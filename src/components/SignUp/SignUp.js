@@ -1,8 +1,8 @@
 // src/components/SignUp/SignUp.js
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { register as registerRequest } from '../../services/authService'; // سرویس ثبت‌نام
-import '../login/Login.css';                // همان تم لاگین
+import { register as registerRequest } from '../../services/authService';
+import '../login/Login.css';             
 
 import logo from '../../assets/logo.png';
 import wave from '../../assets/wave.png';
@@ -12,17 +12,48 @@ const SignUp = () => {
   const [lastName,  setLastName]  = useState('');
   const [mobile,    setMobile]    = useState('');
   const [password,  setPassword]  = useState('');
+  const [confirm,   setConfirm]   = useState('');
 
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState('');
-  const navigate  = useNavigate();
+  const [pwdErr,  setPwdErr]  = useState(false);   // خطای عدم تطابق رمز
+
+  const navigate = useNavigate();
+
+  /* کمکى: تطابق رمز و تکرار */
+  const passwordsMismatch = (pwd, conf) => pwd && conf && pwd !== conf;
+
+  /* محدودکردن ورودی تلفن به فقط عدد و حداکثر ۱۰ رقم */
+  const handleMobileChange = e => {
+    const onlyDigits = e.target.value.replace(/\D/g, '').slice(0, 11);
+    setMobile(onlyDigits);
+  };
+
+  const handlePasswordChange = e => {
+    const value = e.target.value;
+    setPassword(value);
+    setPwdErr(passwordsMismatch(value, confirm));
+  };
+
+  const handleConfirmChange = e => {
+    const value = e.target.value;
+    setConfirm(value);
+    setPwdErr(passwordsMismatch(password, value));
+  };
 
   const handleSubmit = async e => {
     e.preventDefault();
 
-    // اعتبارسنجی ساده
-    if (!firstName || !lastName || !mobile || !password) {
+    if (!firstName || !lastName || !mobile || !password || !confirm) {
       setError('تمام فیلدها الزامی هستند.');
+      return;
+    }
+    if (mobile.length !== 11) {
+      setError('شماره همراه باید دقیقاً ۱۰ رقم باشد.');
+      return;
+    }
+    if (passwordsMismatch(password, confirm)) {
+      setError('رمز عبور و تکرار آن یکسان نیستند.');
       return;
     }
 
@@ -30,10 +61,7 @@ const SignUp = () => {
     setError('');
 
     try {
-      // فراخوانی بک‌اند
       await registerRequest({ firstName, lastName, mobile, password });
-
-      // بعد از ثبت‌نام موفق می‌توانی توکن بگیری یا به لاگین برگردانی
       navigate('/login', { replace: true });
     } catch (err) {
       setError(
@@ -47,7 +75,6 @@ const SignUp = () => {
 
   return (
     <div className="login-container">
-      {/* فرم ثبت‌نام */}
       <div className="login-card">
         <div className="logo">
           <img src={logo} alt="لوگو MCL" />
@@ -76,9 +103,13 @@ const SignUp = () => {
           <div className="form-group">
             <input
               type="tel"
+              dir="rtl"
+              style={{ textAlign: 'right' }}
               placeholder="شماره همراه"
               value={mobile}
-              onChange={e => setMobile(e.target.value)}
+              onChange={handleMobileChange}
+              maxLength="11"
+              inputMode="numeric"
             />
           </div>
 
@@ -87,17 +118,29 @@ const SignUp = () => {
               type="password"
               placeholder="رمز عبور"
               value={password}
-              onChange={e => setPassword(e.target.value)}
+              onChange={handlePasswordChange}
+            />
+          </div>
+
+          <div className="form-group">
+            <input
+              type="password"
+              placeholder="تکرار رمز عبور"
+              value={confirm}
+              onChange={handleConfirmChange}
             />
           </div>
 
           {error && <p className="error-msg">{error}</p>}
+          {pwdErr && !error && (
+            <p className="error-msg">رمز عبور و تکرار آن مطابقت ندارند.</p>
+          )}
 
           <div className="button-group">
             <button
               type="submit"
               className="btn btn-primary"
-              disabled={loading}
+              disabled={loading || pwdErr}
             >
               {loading ? 'در حال ثبت‌نام…' : 'ثبت‌نام'}
             </button>
@@ -113,7 +156,6 @@ const SignUp = () => {
         </form>
       </div>
 
-      {/* تصویر موج */}
       <div className="wave-holder">
         <img src={wave} alt="پس‌زمینه موج" />
       </div>
