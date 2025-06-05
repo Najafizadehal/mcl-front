@@ -1,141 +1,325 @@
-:root{--green:#3fbf9f}
-
-html,body,.home2{margin:0;height:100%}
-
-.home2{font-family:sans-serif;direction:rtl}
-
-.navbar{
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  height:64px;
-  display:flex;
-  align-items:center;
-  gap:16px;
-  padding:0 32px;
-  background:transparent;
-  box-shadow:0 1px 6px rgba(0,0,0,.05);
-  z-index:10
+:root {
+  --green: #3fbf9f;
 }
 
-.search{
+html,
+body {
+  margin: 0;
+  height: 100%;
+  direction: rtl;
+  font-family: sans-serif;
+  scroll-behavior: smooth;
+}
+
+/* ===========================
+   ساختار کلی صفحه
+   =========================== */
+/* کانتینر اصلی صفحه: هدر + محتوا + فوتر */
+.home2 {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* بخش محتوا (همه چیز به جز هدر و فوتر) */
+.main-content {
+  flex: 1;               /* اشغال تمام فضای باقیمانده */
+  display: flex;
+  flex-direction: column;
+  overflow: auto;        /* اگر محتوا از ارتفاع بیشتر شد، اسکرول بخورد */
+}
+
+/* ===========================
+   Navbar (هدر)
+   =========================== */
+   .navbar{
+      position:absolute;          /* روى تصویر Hero می‌نشیند */
+      top:0;
+      left:0;
+      right:0;
+      height:64px;
+      display:flex;
+      align-items:center;
+      gap:16px;
+      padding:0 32px;
+      background:transparent;     /* کاملاً هم‌رنگ پس‌زمینهٔ Hero */
+      z-index:10;
+    }
+.search {
   color: #fff;
-  width:260px;          /* عرض ثابت */
-  flex:0 0 260px;       /* جلوگیری از کش آمدن */
-  border:none;
-  border-bottom:1px solid #ffffff;
-  padding:6px 28px 4px 0;
-  font-size:14px;
-  background:transparent;
-  outline:none;         /* حذف قاب پیش‌فرض هنگام فوکوس */
+  width: 260px;           /* عرض ثابت */
+  flex: 0 0 260px;        /* جلوگیری از کش‌آمدن */
+  border: none;
+  border-bottom: 1px solid #ffffff;
+  padding: 6px 28px 4px 0;
+  font-size: 14px;
+  background: transparent;
+  outline: none;
 }
 
-/* جلوگیری از نمایش قاب آبی کروم در حالت فوکوس */
-.search:focus{
-  outline:none;
-  border-bottom:1px solid var(--green);
+.search:focus {
+  outline: none;
+  border-bottom: 1px solid var(--green);
 }
 
-.brand{
-  margin:0 auto;
-  color:var(--green);
-  font-size:18px;
-  font-weight:bold;
-  white-space:nowrap
+.search::placeholder {
+  color: #fff;
 }
 
-.menu-btn{
-  background:none;
-  border:none;
-  font-size:28px;
-  color:var(--green);
-  cursor:pointer
+.brand {
+  margin: 0 auto;
+  color: var(--green);
+  font-size: 18px;
+  font-weight: bold;
+  white-space: nowrap;
 }
 
-.hero{
-  margin-top:0px;
-  height:300px;
-  /* background:var(--green); */
-  position:relative;
-  overflow:hidden
+.menu-btn {
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: var(--green);
+  cursor: pointer;
 }
 
-.hero-bg{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  /* opacity:.3 */
+/* وقتی Hero بالای آن قرار دارد (روی تصویر تیره) باید متن و جستجو سفید باشند */
+.hero + .navbar .brand,
+.hero + .navbar .menu-btn,
+.hero + .navbar .search {
+  color: #fff;
+  border-bottom: 1px solid #fff;
 }
 
-.categories{
-  display:flex;
-  justify-content:center;
-  gap:48px;
-  padding:24px 0
+/* ===========================
+   Hero
+   =========================== */
+/*
+  Hero یک بخش ثابت به ارتفاع 300px دارد.
+  با Flex یا Grid، اگر بخواهیم محتوا داخل آن منعطف‌تر باشد،
+  می‌توانیم flex: 0 0 300px یا min-height تعریف کنیم.
+*/
+.hero {
+  flex: 0 0 300px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;        /* اگر بخواهید محتوایی داخلش (مانند متن یا دکمه) وسط چین شود */
+  justify-content: center;    /* اینجا فقط تصویر پس‌زمینه داریم */
 }
 
-.categories figure{
-  text-align:center;
-  color:var(--green);
-  font-size:13px
+/* تصویر پس‌زمینه Hero */
+.hero-bg {
+  position: absolute;
+  inset: 0;                    /* top:0; right:0; bottom:0; left:0 */
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.cat-circle{
-  width:60px;
-  height:60px;
-  border-radius:50%;
-  background:var(--green);
-  margin:0 auto 6px
+/* SVG موج پایین Hero */
+.hero-wave {
+  position: absolute;
+  bottom: -1px;                /* حذف خط آنتی‌آلیاسینگ */
+  left: 0;
+  width: 100%;
+  height: 90px;                /* بلندی موج */
+  pointer-events: none;        /* اجازهٔ کلیک به عناصر زیرین */
+  transform-origin: bottom;
+  transform: scaleY(2.6);      /* مقیاس‌دهی برای جاگیری مناسب */
 }
 
-.best-sellers{
-  padding:40px 32px
+/* ===========================
+   آیکون‌های دسته‌بندی (Categories) درون SVG
+   =========================== */
+/* این گروه داخل SVG قرار دارد و موقعیت مطلق در دل viewBox دارد */
+.wave-category-icons {
+  /* نیازی به استایل اضافی خارجی نیست */
 }
 
-.best-sellers h2{
-  color:var(--green);
-  margin-bottom:24px
+/* ===========================
+   Best Sellers (محصولات پرفروش)
+   =========================== */
+/* کانتینر کلی: از flex-column استفاده می‌کنیم */
+.best-sellers {
+  flex: 1;                    /* در صورت کمبود فضا، بزرگ شود */
+  display: flex;
+  flex-direction: column;
+  padding: 40px 32px;
+  box-sizing: border-box;
 }
 
-.product-strip{
-  display:flex;
-  gap:24px;
-  overflow-x:auto;
-  padding-bottom:8px
+.best-sellers h2 {
+  color: var(--green);
+  margin-bottom: 24px;
+  /* می‌توانیم مقدار font-size را با درصد تنظیم کنیم */
+  font-size: 1.25rem;         /* معادل ~20px */
 }
 
-.product-card{
-  flex:0 0 260px;
-  height:180px;
-  background:#e5e5e5;
-  border-radius:6px;
-  box-shadow:0 2px 6px rgba(0,0,0,.08)
+/* نوار افقی محصولات: Flex + overflow-x برای اسکرول */
+.product-strip {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  /* هنگام هدر رفتن فضای افقی، اسکرول نمایش داده می‌شود */
 }
+
+.product-strip::-webkit-scrollbar {
+  height: 6px;
+}
+
+.product-strip::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+.product-card {
+  flex: 0 0 260px;            /* عرض پایهٔ کارت */
+  height: 180px;
+  background: #e5e5e5;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* ===========================
+   Footer (فوتر)
+   =========================== */
+/* تبدیل فوتر به یک خط باریک سبز در پایین صفحه */
+.footer {
+  flex: 0 0 40px;             /* ارتفاع ثابت 40px */
+  background: var(--green);
+  color: #fff;
+  text-align: right;
+  display: flex;              /* استفاده از Flex صرفاً برای نگهداری ساختار */
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* به دلیل اینکه دیگر محتوای متنی نداریم، می‌توانیم تگ <footer> را خالی بگذاریم */
+
+/* اگر قبلاً کلاس footer-wave بود، حذفش می‌کنیم */
+.footer-wave {
+  display: none;
+}
+
+/* ===========================
+   Responsive (ریسپانسیو)
+   =========================== */
+@media (max-width: 1024px) {
+  /* کاهش فضای paddingِ محصول و هدر */
+  .navbar {
+    padding: 0 24px;
+  }
+  .search {
+    width: 200px;
+    flex: 0 0 200px;
+    font-size: 13px;
+  }
+  .brand {
+    font-size: 1.125rem;      /* ~18px */
+  }
+  .best-sellers {
+    padding: 32px 24px;
+  }
+  .best-sellers h2 {
+    font-size: 1.125rem;      /* ~18px */
+  }
+  .product-card {
+    flex: 0 0 220px;          /* کمی کوچک‌تر در تبلت */
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 16px;
+  }
+  .search {
+    width: 140px;
+    flex: 0 0 140px;
+    font-size: 12px;
+  }
+  .brand {
+    font-size: 1rem;          /* ~16px */
+  }
+  .best-sellers {
+    padding: 24px 16px;
+  }
+  .best-sellers h2 {
+    font-size: 1rem;          /* ~16px */
+    margin-bottom: 16px;
+  }
+  .product-strip {
+    gap: 16px;
+  }
+  .product-card {
+    flex: 0 0 180px;          /* اندازهٔ کارت کمتر */
+    height: 140px;
+  }
+  /* ارتفاع فوتر را به 30px کاهش می‌دهیم */
+  .footer {
+    flex: 0 0 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search {
+    display: none;            /* مخفی‌کردن جستجو در موبایل */
+  }
+  .brand {
+    font-size: 0.875rem;      /* ~14px */
+    flex: 1;                  /* وسط‌چین شدن */
+    text-align: center;
+  }
+  .menu-btn {
+    margin-left: auto;
+  }
+  .best-sellers {
+    padding: 16px 8px;
+  }
+  .best-sellers h2 {
+    font-size: 0.875rem;      /* ~14px */
+    margin-bottom: 12px;
+  }
+  .product-card {
+    flex: 0 0 140px;
+    height: 120px;
+  }
+  .product-strip {
+    gap: 12px;
+  }
+  .footer {
+    flex: 0 0 20px;           /* ارتفاع فوتر در موبایل */
+  }
+}
+
+.brand,
+.menu-btn{color:#fff}
+
+.search{color:#fff;border-bottom:1px solid #fff}
+.search::placeholder{color:#fff}
+.search:focus{border-bottom:1px solid #fff}
+
 
 .footer{
+  flex:0 0 40px;          /* باریک */
   background:var(--green);
   color:#fff;
-  text-align:right;
-  padding:60px 32px
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
 
-@media(max-width:768px){
-  .categories{gap:24px}
-  .best-sellers{padding:32px 16px}
-  .navbar{padding:0 16px}
-  .brand{font-size:16px}
+.footer-inner{
+  display:flex;
+  gap:8px;                /* فاصلهٔ بین آیتم‌ها */
+  flex-wrap:wrap;
+  font-size:14px;
 }
 
-
-
-.hero-wave{
-  position:absolute;
-  bottom:-1px;          /* محو لبهٔ پیکسل */
-  left:0;
-  width:100%;
-  height:90px;          /* بلندی موج */
-  pointer-events:none;
-  transform-origin:bottom;
-  transform:scaleY(2.6);  /* کلیک‌پذیری را مختل نکند */
+.footer-inner p{margin:0}
+.footer-inner p::after{
+  content:"|";
+  margin:0 6px;
 }
+.footer-inner p:last-child::after{content:""}
