@@ -347,7 +347,19 @@
   .error-msg {
     color: #e03131;      /* قرمز صریح */
     margin-bottom: 10px;
-    text-align: right;
+    text-align: right ;
   }
 
+  .forgot-link {
+    margin-top: 14px;
+    text-align: center;
+    font-size: 14px;
+    color: #3fbf9f;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+  
+  .forgot-link:hover {
+    opacity: 0.7;
+  }
   

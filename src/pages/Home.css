@@ -1,0 +1,93 @@
+/* کانتینر کلی صفحه */
+.home-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: 100%;
+  }
+  
+  /* ===== نوبار بالا ===== */
+  .home-header {
+    position: sticky;  /* در بالا ثابت بماند */
+    top: 0;
+    background: #ffffff;
+    display: flex;
+    justify-content: flex-end; /* دکمه‌ها راست‌چین شوند */
+    align-items: center;
+    padding: 10px 40px;
+    border-bottom: 1px solid #e6f4f1;
+    z-index: 10;
+  }
+  
+  /* متن وسط نوبار */
+  .brand-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 20px;
+    font-weight: bold;
+    color: #3fbf9f;
+    white-space: nowrap;
+    pointer-events: none; /* روی کلیک‌ها تأثیر نگذارد */
+  }
+  
+  /* دکمه‌های سمت راست */
+  .nav-actions {
+    display: flex;
+    gap: 12px;
+  }
+  
+  /* ===== بخش اصلی ===== */
+  .home-main {
+    flex: 1;
+    padding: 100px 40px 40px; /* فاصلهٔ زیر نوبار */
+    overflow-y: auto;
+  }
+  
+  .section-title {
+    font-size: 22px;
+    margin-bottom: 24px;
+    color: #333;
+  }
+  
+  /* گرید محصولات */
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 24px;
+  }
+  
+  .product-card {
+    border: 1px solid #e6f4f1;
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+    background: #fcfdfd;
+    transition: box-shadow 0.2s ease;
+  }
+  .product-card:hover {
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
+  }
+  .product-card img {
+    width: 120px;
+    height: auto;
+    object-fit: contain;
+    margin-bottom: 12px;
+  }
+  .product-card h3 {
+    font-size: 16px;
+    color: #222;
+    margin-bottom: 6px;
+  }
+  .product-card .price {
+    color: #3fbf9f;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  
+  /* ===== موبایل ===== */
+  @media (max-width: 900px) {
+    .home-header { padding: 10px 20px; }
+    .home-main   { padding: 80px 20px 24px; }
+  }
+  

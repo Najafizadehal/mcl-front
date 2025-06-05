@@ -3,6 +3,8 @@ import Login from './components/login/Login';
 import Dashboard from './pages/Dashboard';
 import ProtectedRoute from './routes/ProtectedRoute';
 import SignUp from './components/SignUp/SignUp';
+import Home from './pages/Home';
+import ForgotPassword from './components/ForgotPassword/ForgotPassword';
 
 function App() {
   return (
@@ -10,6 +12,9 @@ function App() {
       {/* صفحهٔ عمومی */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<SignUp />} />
+      <Route path="/" element={<Home />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+
 
       {/* صفحهٔ محافظت‌شده */}
       <Route
