@@ -1,93 +1,141 @@
-/* کانتینر کلی صفحه */
-.home-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    width: 100%;
-  }
-  
-  /* ===== نوبار بالا ===== */
-  .home-header {
-    position: sticky;  /* در بالا ثابت بماند */
-    top: 0;
-    background: #ffffff;
-    display: flex;
-    justify-content: flex-end; /* دکمه‌ها راست‌چین شوند */
-    align-items: center;
-    padding: 10px 40px;
-    border-bottom: 1px solid #e6f4f1;
-    z-index: 10;
-  }
-  
-  /* متن وسط نوبار */
-  .brand-title {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 20px;
-    font-weight: bold;
-    color: #3fbf9f;
-    white-space: nowrap;
-    pointer-events: none; /* روی کلیک‌ها تأثیر نگذارد */
-  }
-  
-  /* دکمه‌های سمت راست */
-  .nav-actions {
-    display: flex;
-    gap: 12px;
-  }
-  
-  /* ===== بخش اصلی ===== */
-  .home-main {
-    flex: 1;
-    padding: 100px 40px 40px; /* فاصلهٔ زیر نوبار */
-    overflow-y: auto;
-  }
-  
-  .section-title {
-    font-size: 22px;
-    margin-bottom: 24px;
-    color: #333;
-  }
-  
-  /* گرید محصولات */
-  .product-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 24px;
-  }
-  
-  .product-card {
-    border: 1px solid #e6f4f1;
-    border-radius: 14px;
-    padding: 16px;
-    text-align: center;
-    background: #fcfdfd;
-    transition: box-shadow 0.2s ease;
-  }
-  .product-card:hover {
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
-  }
-  .product-card img {
-    width: 120px;
-    height: auto;
-    object-fit: contain;
-    margin-bottom: 12px;
-  }
-  .product-card h3 {
-    font-size: 16px;
-    color: #222;
-    margin-bottom: 6px;
-  }
-  .product-card .price {
-    color: #3fbf9f;
-    font-weight: 600;
-    margin-bottom: 12px;
-  }
-  
-  /* ===== موبایل ===== */
-  @media (max-width: 900px) {
-    .home-header { padding: 10px 20px; }
-    .home-main   { padding: 80px 20px 24px; }
-  }
-  
+:root{--green:#3fbf9f}
+
+html,body,.home2{margin:0;height:100%}
+
+.home2{font-family:sans-serif;direction:rtl}
+
+.navbar{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  height:64px;
+  display:flex;
+  align-items:center;
+  gap:16px;
+  padding:0 32px;
+  background:transparent;
+  box-shadow:0 1px 6px rgba(0,0,0,.05);
+  z-index:10
+}
+
+.search{
+  color: #fff;
+  width:260px;          /* عرض ثابت */
+  flex:0 0 260px;       /* جلوگیری از کش آمدن */
+  border:none;
+  border-bottom:1px solid #ffffff;
+  padding:6px 28px 4px 0;
+  font-size:14px;
+  background:transparent;
+  outline:none;         /* حذف قاب پیش‌فرض هنگام فوکوس */
+}
+
+/* جلوگیری از نمایش قاب آبی کروم در حالت فوکوس */
+.search:focus{
+  outline:none;
+  border-bottom:1px solid var(--green);
+}
+
+.brand{
+  margin:0 auto;
+  color:var(--green);
+  font-size:18px;
+  font-weight:bold;
+  white-space:nowrap
+}
+
+.menu-btn{
+  background:none;
+  border:none;
+  font-size:28px;
+  color:var(--green);
+  cursor:pointer
+}
+
+.hero{
+  margin-top:0px;
+  height:300px;
+  /* background:var(--green); */
+  position:relative;
+  overflow:hidden
+}
+
+.hero-bg{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  /* opacity:.3 */
+}
+
+.categories{
+  display:flex;
+  justify-content:center;
+  gap:48px;
+  padding:24px 0
+}
+
+.categories figure{
+  text-align:center;
+  color:var(--green);
+  font-size:13px
+}
+
+.cat-circle{
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  background:var(--green);
+  margin:0 auto 6px
+}
+
+.best-sellers{
+  padding:40px 32px
+}
+
+.best-sellers h2{
+  color:var(--green);
+  margin-bottom:24px
+}
+
+.product-strip{
+  display:flex;
+  gap:24px;
+  overflow-x:auto;
+  padding-bottom:8px
+}
+
+.product-card{
+  flex:0 0 260px;
+  height:180px;
+  background:#e5e5e5;
+  border-radius:6px;
+  box-shadow:0 2px 6px rgba(0,0,0,.08)
+}
+
+.footer{
+  background:var(--green);
+  color:#fff;
+  text-align:right;
+  padding:60px 32px
+}
+
+@media(max-width:768px){
+  .categories{gap:24px}
+  .best-sellers{padding:32px 16px}
+  .navbar{padding:0 16px}
+  .brand{font-size:16px}
+}
+
+
+
+.hero-wave{
+  position:absolute;
+  bottom:-1px;          /* محو لبهٔ پیکسل */
+  left:0;
+  width:100%;
+  height:90px;          /* بلندی موج */
+  pointer-events:none;
+  transform-origin:bottom;
+  transform:scaleY(2.6);  /* کلیک‌پذیری را مختل نکند */
+}

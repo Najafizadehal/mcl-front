@@ -1,58 +1,72 @@
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom'
+import './Home.css'
+import '../components/login/Login.css'
+import heroImg from './assets/hero.png'
 
-/* استایل دکمه‌ها را از Login.css می‌گیریم */
-import '../components/login/Login.css';
-import './Home.css';
-
-/* نمونهٔ دیتا – بعداً می‌توانی از سرور بیاوری */
-import iphone15   from '../assets/phones/iphone15.png';
-import galaxyS24  from '../assets/phones/iphone15.png';
-import xiaomi14   from '../assets/phones/iphone15.png';
-
-const products = [
-  { id: 1, name: 'iPhone 15 Pro Max',      price: '65,000,000', img: iphone15 },
-  { id: 2, name: 'Samsung Galaxy S24 Ultra', price: '58,500,000', img: galaxyS24 },
-  { id: 3, name: 'Xiaomi 14 Ultra',        price: '47,900,000', img: xiaomi14 }
-];
+const categories = [
+  { id: 1, label: 'آی‌فون و دی' },
+  { id: 2, label: 'لوازم تعمیرات' },
+  { id: 3, label: 'لوازم جانبی' },
+  { id: 4, label: 'قطعات بُرد' }
+]
 
 const Home = () => {
-  const navigate = useNavigate();
+  // const nav = useNavigate()
 
   return (
-    <div className="home-container">
-      {/* نوبار */}
-      <header className="home-header">
-        {/* متن وسط صفحه */}
-        <h1 className="brand-title">Mobile&nbsp;Center&nbsp;Lamerd</h1>
-
-        {/* دکمه‌ها در سمت راست */}
-        <nav className="nav-actions">
-          <button className="btn btn-secondary" onClick={() => navigate('/login')}>
-            ورود / ثبت‌نام
-          </button>
-          <button className="btn btn-primary" onClick={() => navigate('/cart')}>
-            سبد خرید
-          </button>
-        </nav>
+    <div className="home2">
+      <header className="navbar">
+        <input className="search" placeholder="جست‌وجو کنید" />
+        <h1 className="brand">Mobile Center Lamerd</h1>
+        <button className="menu-btn" aria-label="menu">☰</button>
       </header>
 
-      {/* محتوا */}
-      <main className="home-main">
-        <h2 className="section-title">پرفروش‌ترین‌ها</h2>
+      <section className="hero">
+  <img src={heroImg} alt="" className="hero-bg" />
 
-        <section className="product-grid">
-          {products.map(p => (
-            <div key={p.id} className="product-card">
-              <img src={p.img} alt={p.name} />
-              <h3>{p.name}</h3>
-              <p className="price">{p.price} تومان</p>
-              <button className="btn btn-primary">افزودن به سبد</button>
-            </div>
+  {/* موج سفیدِ انتهای سکشن */}
+  <svg className="hero-wave" viewBox="0 0 1440 320" preserveAspectRatio="none">
+  <path
+    d="M0 224
+       C 240 128 480 128 720 224
+       C 960 320 1200 320 1440 224
+       L1440 320H0Z"
+    fill="#ffffff"
+  />
+</svg>
+
+</section>
+
+
+      <section className="categories">
+        {categories.map(c => (
+          <figure key={c.id}>
+            <div className="cat-circle" />
+            <figcaption>{c.label}</figcaption>
+          </figure>
+        ))}
+      </section>
+
+      <section className="best-sellers">
+        <h2>محصولات پرفروش</h2>
+        <div className="product-strip">
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="product-card" />
           ))}
-        </section>
-      </main>
-    </div>
-  );
-};
+        </div>
+      </section>
 
-export default Home;
+      <footer className="footer">
+        <h3>درباره ما</h3>
+        <p>
+          موبایل سنتر لامرد<br />
+          تلفن: ۰۷۱-۳۴۵۶۷۸۹<br />
+          ایمیل: info@example.com<br />
+          آدرس: خیابان ۱
+        </p>
+      </footer>
+    </div>
+  )
+}
+
+export default Home
