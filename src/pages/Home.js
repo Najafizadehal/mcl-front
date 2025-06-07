@@ -2,7 +2,7 @@ import React from 'react';
 import './Home.css';
 import '../components/login/Login.css'; // اگر نیاز به استایل Login دارید وارد کنید
 import heroImg from './assets/hero.png'; // مسیر عکس Hero را با مسیر درست خودتان جایگزین کنید
-
+import p1 from './assets/product/s24.png'
 // import heroImg   from './assets/hero.png';
 import iconParts from './assets/icons/smallpart.png';
 import iconLCD   from './assets/icons/lcd.png';
@@ -14,6 +14,14 @@ const categories = [
     { id: 2, label: 'ال سی دی',   icon: iconLCD    },
     { id: 3, label: 'جانبی',      icon: iconAcc    },
     { id: 4, label: 'ابزارآلات',  icon: iconTools  },
+  ];
+
+
+  const bestSellers = [
+    { id: 1, title: 'iPhone 15 Pro', price: '65,000,000', img: 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fgadgets.fzfdevelopers.co.zw%2Fproduct%2Fiphone-15-pro-max%2F&psig=AOvVaw0HflapmkyiIUNl4a8YdIq5&ust=1749285177941000&source=images&cd=vfe&opi=89978449&ved=0CBMQjRxqFwoTCKDfg6Kx3I0DFQAAAAAdAAAAABAM' },
+    { id: 2, title: 'Samsung S24 Ultra', price: '58,500,000', img: p1 },
+    { id: 3, title: 'Xiaomi 14 Ultra', price: '47,900,000', img: 'https://via.placeholder.com/200x140' },
+    { id: 4, title: 'Honor Magic 6', price: '39,800,000', img: 'https://via.placeholder.com/200x140' },
   ];
 
 // مختصات روی مسیر Bézier برای قرارگیری دقیق آیکون‌ها (x,y بر حسب viewBox 1440×320)
@@ -35,11 +43,11 @@ const Home = () => {
           type="text"
           placeholder="جست‎وجو کنید"
         />
-        <h1 className="brand">Mobile Center Lamerd</h1>
+    <h1 className="brand">Mobile Center Lamerd</h1>
         <button className="menu-btn" aria-label="Menu">
           ☰
         </button>
-      </header>
+  </header>
 
       {/* بخش Hero */}
       <section className="hero">
@@ -68,29 +76,17 @@ const Home = () => {
               return (
                 <g
                   key={pos.id}
-                  // مرکزی کردن آیکون به‌وسیله‌ی translate(-r, -r)
+                  className="cat-btn"
                   transform={`translate(${pos.x}, ${pos.y})`}
+                  onClick={() => console.log('دسته', category.label)}
                 >
-                  {/* دایره‌ی سبز */}
-                  +<circle cx={0} cy={0} r={40} fill="var(--green)" />
-<image
-  href={category.icon}
-  x={-20}            /* نصف عرض آیکن برای مرکزی‌کردن */
-  y={-18}
-  width="36"
-  height="36"
-/>
-                  {/* متن زیر دایره */}
-                  <text
-                    x={0}
-                    y={66}
-                    fontSize="17"
-                    fill="var(--green)"
-                    textAnchor="middle"
-                  >
+                  <circle cx="0" cy="0" r="40" fill="var(--green)" />
+                  <image href={category.icon} x="-20" y="-18" width="36" height="36" />
+                  <text x="0" y="66" fontSize="17" fill="var(--green)" textAnchor="middle">
                     {category.label}
                   </text>
                 </g>
+
               );
             })}
           </g>
@@ -100,9 +96,15 @@ const Home = () => {
       {/* محصولات پرفروش */}
       <section className="best-sellers">
         <h2>محصولات پرفروش</h2>
+
         <div className="product-strip">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="product-card" />
+          {bestSellers.map(p => (
+            <div key={p.id} className="product-card">
+              <img src={p.img} alt={p.title} />
+              <h3>{p.title}</h3>
+              <p className="price">{p.price} تومان</p>
+              <button className="add-btn">افزودن به سبد</button>
+            </div>
           ))}
         </div>
       </section>

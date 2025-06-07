@@ -32,19 +32,27 @@ body {
 /* ===========================
    Navbar (هدر)
    =========================== */
-   .navbar{
-      position:absolute;          /* روى تصویر Hero می‌نشیند */
-      top:0;
-      left:0;
-      right:0;
-      height:64px;
-      display:flex;
-      align-items:center;
-      gap:16px;
-      padding:0 32px;
-      background:transparent;     /* کاملاً هم‌رنگ پس‌زمینهٔ Hero */
-      z-index:10;
-    }
+   .navbar {
+    position: absolute;          /* روی تصویر Hero می‌نشیند */
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    padding: 0 32px;
+    background: transparent;     /* کاملاً هم‌رنگ پس‌زمینهٔ Hero */
+    z-index: 10;
+    justify-content: space-between; /* فاصله بین جست‌وجو و بقیه عناصر */
+  }
+
+  .navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 16px; /* فاصله بین تایتل و دکمه منو */
+  }
+
+
 .search {
   color: #fff;
   width: 260px;           /* عرض ثابت */
@@ -67,7 +75,7 @@ body {
 }
 
 .brand {
-  margin: 0 auto;
+  margin-right: 0 auto;
   color: var(--green);
   font-size: 18px;
   font-weight: bold;
@@ -323,3 +331,75 @@ body {
   margin:0 6px;
 }
 .footer-inner p:last-child::after{content:""}
+
+/* === دکمه‌های دسته‌بندی روی موج === */
+.category-buttons{
+  position:absolute;
+  bottom:140px;          /* با عمق موج هماهنگ کن */
+  right:32px;            /* در RTL = چسبیده به چپِ موج */
+  display:flex;
+  gap:32px;
+  z-index:6;
+}
+.cat-btn{
+  background:none;
+  border:none;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  cursor:pointer;
+}
+.cat-btn img{
+  width:48px;
+  height:48px;
+  margin-bottom:6px;
+}
+.cat-btn span{
+  font-size:16px;
+  color:var(--green);
+}
+
+/* === کارت محصول === */
+.product-card{
+  flex:0 0 260px;
+  height:280px;     /* ارتفاع بیش‌تر */
+  background:#fff;
+  border-radius:10px;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+  display:flex;
+  flex-direction:column;
+  padding:12px;
+}
+
+.product-card img{
+  width:100%;
+  height:180px;         /* فضای ثابت برای عکس */
+  object-fit:contain;   /* عکس درون کادر جا می‌شود بدون بُرش */
+  border-radius:6px;
+}
+
+.product-card h3{
+  font-size:15px;
+  margin:8px 0 4px;
+}
+.product-card .price{
+  color:var(--green);
+  font-weight:600;
+  margin-bottom:8px;
+}
+.add-btn{
+  background:var(--green);
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  padding:6px 0;
+  cursor:pointer;
+}
+.add-btn:hover{opacity:.9}
+
+/* دکمه‌بودن آيکون‌های روی موج */
+.cat-btn{cursor:pointer}
+.cat-btn:hover image{opacity:.9}     /* افکت سادهٔ هاور (اختیاری) */
+
+/* کارت محصول – تغییر فقط ارتفاع تصویر اگر لازم بود */
+.product-card img{width:100%;height:140px;object-fit:cover;border-radius:6px}
