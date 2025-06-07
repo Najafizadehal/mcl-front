@@ -1,35 +1,33 @@
+// src/App.jsx (یا src/routes/AppRoutes.jsx)
+import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import Login from './components/login/Login';
-import Dashboard from './pages/Dashboard';
-import ProtectedRoute from './routes/ProtectedRoute';
-import SignUp from './components/SignUp/SignUp';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
 import Home from './pages/Home';
-import ForgotPassword from './components/ForgotPassword/ForgotPassword';
+import ProtectedRoute from './routes/ProtectedRoute';
 
-function App() {
+export default function App() {
   return (
     <Routes>
-      {/* صفحهٔ عمومی */}
+      {/* صفحات عمومی */}
       <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<SignUp />} />
-      <Route path="/" element={<Home />} />
+      <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path='/home' element={<Home/>}/>
 
-
-      {/* صفحهٔ محافظت‌شده */}
+      {/* صفحه محافظت‌شده: هوم */}
       <Route
         path="/"
         element={
           <ProtectedRoute>
-            <Dashboard />
+            {/* <Home /> */}
           </ProtectedRoute>
         }
       />
 
-      {/* هر مسیر ناشناس → ریدایرکت */}
+      {/* هر مسیر دیگری → ریدایرکت به هوم */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
-
-export default App;

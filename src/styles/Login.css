@@ -1,0 +1,187 @@
+/* src/components/Login.css */
+
+/* ========================
+   تنظیمات پایه (Reset)
+======================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ========================
+   html و body و #root تا 100% ارتفاع
+======================== */
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  padding: 0;
+}
+
+body {
+  font-family: sans-serif;
+  background-color: #ffffff;
+}
+
+/* ========================
+   کانتینر اصلی لاگین
+======================== */
+.login-container {
+  display: flex;
+  flex-direction: row;    /* تصویر سمت چپ، فرم سمت راست */
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* ========================
+   بخش چپ: فرم لاگین
+======================== */
+.login-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0 40px;
+  z-index: 1;             /* روی موج قرار بگیرد */
+}
+
+.login-card .logo {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.login-card .logo img {
+  width: 80px;
+  height: auto;
+  display: block;
+  margin: 0 auto 10px;
+}
+
+.login-card .logo h1 {
+  font-size: 24px;
+  color: #3fbf9f;
+  letter-spacing: 2px;
+}
+
+.login-card .form-group {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.login-card .form-group input {
+  width: 100%;
+  padding: 14px 18px;
+  font-size: 16px;
+  border: 2px solid #3fbf9f;
+  border-radius: 10px;
+  outline: none;
+  color: #333333;
+  background-color: transparent;
+}
+
+.login-card .form-group input::placeholder {
+  color: #aaa;
+  text-align: right;   /* راست‌چین */
+  direction: rtl;      /* جهت RTL */
+}
+
+/* ========================
+   دکمه‌ها
+======================== */
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.button-group .btn {
+  flex: 0 0 48%;
+  padding: 14px 0;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 2px solid #3fbf9f;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.button-group .btn-primary {
+  background-color: #d4f3ef;
+  color: #3fbf9f;
+}
+.button-group .btn-primary:hover {
+  background-color: #c5eae1;
+}
+
+.button-group .btn-secondary {
+  background-color: #ffffff;
+  color: #3fbf9f;
+}
+.button-group .btn-secondary:hover {
+  background-color: #f0fdfa;
+}
+
+/* ========================
+   بخش راست: تصویر موج
+======================== */
+.wave-holder {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.wave-holder img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ========================
+   پیام خطا و لینک فراموشی
+======================== */
+.error-msg {
+  color: #e03131;
+  margin-bottom: 10px;
+  text-align: right;
+}
+
+.forgot-link {
+  margin-top: 14px;
+  text-align: center;
+  font-size: 14px;
+  color: #3fbf9f;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+.forgot-link:hover {
+  opacity: 0.7;
+}
+
+/* ========================
+   ریسپانسیو برای صفحه‌های کوچک‌تر
+======================== */
+@media (max-width: 900px) {
+  .login-container {
+    flex-direction: column-reverse; /* فرم زیر موج قرار گیرد */
+  }
+
+  .login-card,
+  .wave-holder {
+    width: 100%;
+    height: 50vh;
+  }
+
+  .login-card {
+    padding: 20px;
+  }
+}

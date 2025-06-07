@@ -39,7 +39,7 @@ body {
 }
 
 .brand {
-  color: var(--green);
+  color: #fff;
   font-size: 1.125rem;
   font-weight: bold;
 }
@@ -48,7 +48,7 @@ body {
   background: none;
   border: none;
   font-size: 28px;
-  color: var(--green);
+  color: #fff;
   cursor: pointer;
 }
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import heroImg from '../assets/images/hero.png';
+import heroImg from '../assets/hero.png';
 
 const Hero = ({ categories, positions, onCategoryClick }) => (
   <section className="hero">

@@ -1,5 +1,5 @@
 import React from 'react';
-import './Home.css';
+import '../styles/Home.css';
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
 import BestSellers from '../components/BestSellers';
@@ -18,10 +18,12 @@ const categories = [
 ];
 
 const bestSellers = [
-  { id: 1, title: 'iPhone 15 Pro', price: '65,000,000', img: 'https://via.placeholder.com/200x140' },
+  { id: 1, title: 'iPhone 15 Pro', price: '65,000,000', img: 'https://alephksa.com/cdn/shop/files/iPhone_15_Pro_Natural_Titanium_PDP_Image_Position-1__en-ME_3ba0d8a2-b869-424a-b0c4-f1d1ad73b6a6.jpg?v=1694757895&width=1445' },
   { id: 2, title: 'Samsung S24 Ultra', price: '58,500,000', img: p1 },
-  { id: 3, title: 'Xiaomi 14 Ultra', price: '47,900,000', img: 'https://via.placeholder.com/200x140' },
-  { id: 4, title: 'Honor Magic 6', price: '39,800,000', img: 'https://via.placeholder.com/200x140' },
+  { id: 3, title: 'Xiaomi 14 Ultra', price: '47,900,000', img: 'https://www.dxomark.com/wp-content/uploads/medias/post-167787/Xiaomi-14-Ultra_featured-image-packshot-review.jpg' },
+  { id: 4, title: 'LCD Iphone 13 pro max', price: '3,800,000', img: 'https://www.sensepluz.com/wp-content/uploads/1-11.jpg' },
+  { id: 5, title: 'Heater Aoyue 852', price: '7,300,000', img: 'https://allgsmtips.com/wp-content/uploads/2014/07/rework-station-mobile-phone-repair.jpeg' },
+  { id: 6, title: 'Iphone charger', price: '830,000', img: 'https://5.imimg.com/data5/SELLER/Default/2024/7/433783969/PF/UL/AJ/148544875/minimalist-vintage-line-a4-stationery-paper-document-5.png' },
 ];
 
 const positions = [
