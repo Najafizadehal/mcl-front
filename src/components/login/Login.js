@@ -95,7 +95,6 @@ const Login = () => {
           <p className="forgot-link" onClick={() => navigate('/forgot-password')}>
             رمز عبور خود را فراموش کرده‌اید؟
           </p>
-          
         </form>
       </div>
 
