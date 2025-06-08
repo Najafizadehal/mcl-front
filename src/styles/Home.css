@@ -139,6 +139,7 @@ body {
   flex-direction: column;
   align-items: center;
   cursor: pointer;
+  outline: none;
 }
 
 .cat-btn img {
@@ -184,4 +185,13 @@ body {
 
 .footer-inner p:last-child::after {
   content: "";
+}
+
+.cat-btn.selected circle {
+  fill: #ccc !important;
+}
+
+/* اگر خواستی متن هم خاکستری شود */
+.cat-btn.selected text {
+  fill: #666;
 }
