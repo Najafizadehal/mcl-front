@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { logout as logoutRequest } from '../services/authService';
 
 // ⬇️ URL تصویر آنلاین یا CDN
-const PROFILE_URL = 'https://static.thenounproject.com/png/1594252-200.png';
+const PROFILE_URL = 'https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTA1L3Y5MzctYWV3LTEzOS5qcGc.jpg';
 
 const Navbar = ({ onSearch }) => {
   const [open, setOpen]   = useState(false);
@@ -27,9 +27,17 @@ const Navbar = ({ onSearch }) => {
 
   return (
     <header className="navbar">
-      {/* ======== راست: برند + پروفایل ======== */}
-      <div className="navbar-brand-menu">
-        <h1 className="brand">Mobile Center Lamerd</h1>
+      {/* ───── راستِ نوار: برند ───── */}
+      <h1 className="brand">Mobile Center Lamerd</h1>
+
+      {/* ───── چپِ نوار: جست‌وجو + پروفایل ───── */}
+      <div className="search-group">
+        <input
+          className="search"
+          type="text"
+          placeholder="جست‎وجو کنید"
+          onKeyDown={e => e.key === 'Enter' && onSearch?.(e.target.value)}
+        />
 
         <div className="profile-wrapper" ref={menuRef}>
           <button
@@ -43,19 +51,15 @@ const Navbar = ({ onSearch }) => {
           {open && (
             <ul className="profile-menu">
               <li onClick={() => navigate('/profile')}>پروفایل من</li>
-              <li onClick={handleLogout}>خروج</li>
+              <li>
+                <button className="logout-btn" onClick={handleLogout}>
+                  خروج
+                </button>
+              </li>
             </ul>
           )}
         </div>
       </div>
-
-      {/* ======== چپ: سرچ ======== */}
-      <input
-        className="search"
-        type="text"
-        placeholder="جست‎وجو کنید"
-        onKeyDown={e => e.key === 'Enter' && onSearch?.(e.target.value)}
-      />
     </header>
   );
 };

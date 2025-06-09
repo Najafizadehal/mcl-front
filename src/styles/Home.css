@@ -103,11 +103,12 @@ body {
 .wave-category-icons {}
 
 .best-sellers {
-  flex: 1;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   padding: 40px 32px;
   box-sizing: border-box;
+  overflow-y: auto;      /* ← اسکرول تا هر اندازه محصول */
 }
 
 .best-sellers h2 {
@@ -116,11 +117,17 @@ body {
   font-size: 1.25rem;
 }
 
+/* برای اسکرول دو صفحه */
 .product-strip {
-  display: flex;
+  /* از Flex افقی به Grid واکنش‌گرا */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 24px;
-  overflow-x: auto;
-  padding-bottom: 8px;
+
+  /* اسکرول عمودی، نه افقی */
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-bottom: 8px;   /* فاصله از فوتر */
 }
 
 .product-strip::-webkit-scrollbar {
@@ -143,8 +150,8 @@ body {
 }
 
 .cat-btn img {
-  width: 48px;
-  height: 48px;
+  width: var(--icon-size, 48px);   /* مقدار پیش‌فرض 48px */
+  height: var(--icon-size, 48px);
   margin-bottom: 6px;
 }
 
@@ -154,14 +161,20 @@ body {
 }
 
 .footer {
-  flex: 0 0 40px;
+  position: fixed;       /* ⬅️ قبلاً flex-box بود، حالا fixed */
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
   background: var(--green);
   color: #fff;
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
+  z-index: 50;           /* بالاتر از محتوا */
 }
+
+body { padding-bottom: 40px; }
 
 .footer-wave {
   display: none;
@@ -208,35 +221,65 @@ body {
 }
 
 .profile-btn img {
-  width: 40px;
-  height: 40px;
+  width: 56px;      /* قبلی 40px بود */
+  height: 55px;
   border-radius: 50%;
   object-fit: cover;
 }
 
-/* منوی کشویی */
 .profile-menu {
   position: absolute;
-  top: 48px;                 /* دقیقاً زیر آیکون */
-  right: 0;
-  min-width: 140px;
+  top: calc(100% + 8px);   /* 8px زیر آیکون */
+  right: 0;                /* لبهٔ راست آیکون */
+  left: auto;              /* اطمینان از لغو مقدار قبلی */
+  min-width: 200px;
   background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,.15);
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.12);
+  padding: 14px 16px;
   list-style: none;
   margin: 0;
-  padding: 8px 0;
-  z-index: 20;
+  z-index: 100;
 }
 
+/* فلش کوچک زیرِ گوشهٔ راست منو */
+.profile-menu::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  right: 20px;             /* هم‌راستا با آیکون پروفایل */
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  transform: rotate(45deg);
+  box-shadow: -2px -2px 4px rgba(0,0,0,.04);
+}
+
+/* آیتم‌های متنی */
 .profile-menu li {
-  padding: 8px 16px;
+  padding: 8px 0;
   font-size: 14px;
   cursor: pointer;
-  white-space: nowrap;
   color: #333;
+  text-align: center;       /* محتوای متنی و دکمه در مرکز */
 }
 
-.profile-menu li:hover {
-  background: #f0f0f0;
+/* دکمه خروج – همان رنگ سبز سراسری */
+.logout-btn {
+  width: 100%;
+  background: var(--green);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 0;
+  font-size: 14px;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.logout-btn:hover { opacity: .9; }
+.search-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-direction: row-reverse;   /* ← آیکون سمت چپ، اینپوت سمت راست */
 }

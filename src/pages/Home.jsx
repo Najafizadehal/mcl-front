@@ -5,19 +5,21 @@ import Hero from '../components/Hero';
 import BestSellers from '../components/BestSellers';
 import Footer from '../components/Footer';
 import iconParts from '../assets/icons/smallpart.png';
-import iconLCD from '../assets/icons/lcd.png';
+// import iconLCD from '../assets/icons/lcd.png';
 import iconAcc from '../assets/icons/accesories.png';
-import iconTools from '../assets/icons/tools.png';
+import iconTools from '../assets/icons/repair.png';
+import iconMobile from '../assets/icons/mobile.png';
 // import iconMobile from '../assets/icons/mobile.png';
 import { fetchProducts } from '../services/productService';
 
 const categories = [
-  { id: 1, label: 'قطعات ریز', icon: iconParts,   type: 'SMALLPARTS' },
-  { id: 2, label: 'ال سی دی',  icon: iconLCD,     type: 'LCD'         },
-  { id: 3, label: 'جانبی',     icon: iconAcc,     type: 'ACCESSORIES' },
-  { id: 4, label: 'ابزارآلات', icon: iconTools,   type: 'REPAIR'      },
-  { id: 5, label: 'موبایل',    icon: iconLCD,  type: 'PHONE'       },
+  { id: 1, label: 'قطعات ریز', icon: iconParts,  type: 'SMALLPARTS',  size: 64 },
+  { id: 2, label: 'ال‌سی‌دی',   icon: iconMobile, type: 'LCD',        size: 64 },
+  { id: 3, label: 'جانبی',      icon: iconAcc,    type: 'ACCESSORIES',size: 85 },
+  { id: 4, label: 'ابزارآلات',  icon: iconTools,  type: 'REPAIR',     size: 57 },
+  { id: 5, label: 'موبایل',     icon: iconMobile, type: 'PHONE',      size: 64 },
 ];
+
 
 const positions = [
   { x: 200, y: 166, id: 1 },
