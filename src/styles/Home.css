@@ -195,3 +195,48 @@ body {
 .cat-btn.selected text {
   fill: #666;
 }
+
+.profile-wrapper {
+  position: relative;
+}
+
+.profile-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.profile-btn img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* منوی کشویی */
+.profile-menu {
+  position: absolute;
+  top: 48px;                 /* دقیقاً زیر آیکون */
+  right: 0;
+  min-width: 140px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.15);
+  list-style: none;
+  margin: 0;
+  padding: 8px 0;
+  z-index: 20;
+}
+
+.profile-menu li {
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  color: #333;
+}
+
+.profile-menu li:hover {
+  background: #f0f0f0;
+}

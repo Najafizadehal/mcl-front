@@ -9,3 +9,6 @@ export const login = (username, password) =>
 
 export const register = payload =>
   api.post('/auth/signup', payload).then(res => res.data);
+
+export const logout = () =>
+  api.post('/api/v1/auth/logout').then(res => res.data);
