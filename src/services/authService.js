@@ -7,4 +7,5 @@ import api from './api';
 export const login = (username, password) =>
   api.post('/auth/login', { username, password }).then(res => res.data);
 
-export const register = payload => api.post('/auth/register', payload);
+export const register = payload =>
+  api.post('/auth/signup', payload).then(res => res.data);

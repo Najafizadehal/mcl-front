@@ -1,5 +1,5 @@
 export async function fetchProducts(type) {
-    let url = 'http://localhost:8080/api/products';
+    let url = 'http://localhost:8081/api/products';
     if (type) {
       url += `?type=${type}`;
     }
