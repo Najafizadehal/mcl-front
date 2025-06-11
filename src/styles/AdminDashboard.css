@@ -292,3 +292,95 @@
   border-color: #f5c6cb;
   color: #721c24;
 }
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;                      /* top/right/bottom/left = 0 */
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;                 /* بالاتر از سایر عناصر */
+}
+
+/* بدنهٔ مودال */
+.edit-modal {
+  width: 100%;
+  max-width: 480px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px 24px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: modalFadeIn 0.25s ease;
+}
+
+/* عنوان مودال */
+.edit-modal h3 {
+  margin: 0 0 8px;
+  font-size: 1.4rem;
+  color: var(--green);
+  text-align: center;
+}
+
+/* فیلدهای ورودی داخل مودال */
+.edit-modal input[type="text"],
+.edit-modal input[type="number"],
+.edit-modal textarea {
+  border: 1px solid var(--green);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  outline: none;
+  direction: rtl;               /* برای متن فارسی */
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+.edit-modal input:focus,
+.edit-modal textarea:focus {
+  border-color: var(--light-green);
+}
+
+/* دکمه‌های پایین مودال */
+.modal-actions {
+  margin-top: 8px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.modal-actions button {
+  flex: 1;
+  padding: 12px 0;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+/* دکمه ذخیره (سبز) */
+.modal-actions button:first-child {
+  background: var(--green);
+  color: #fff;
+  border: none;
+}
+.modal-actions button:first-child:hover {
+  background: var(--light-green);
+}
+
+/* دکمه انصراف (خاکستری) */
+.modal-actions button:last-child {
+  background: #e0e0e0;
+  color: #333;
+  border: none;
+}
+.modal-actions button:last-child:hover {
+  background: #d5d5d5;
+}
+
+/* انیمیشن نمایان شدن مودال */
+@keyframes modalFadeIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
