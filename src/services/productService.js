@@ -1,12 +1,19 @@
 export async function fetchProducts(type) {
-    let url = 'http://localhost:8081/api/products';
-    if (type) {
-      url += `?type=${type}`;
-    }
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    return data;
+  let url = 'http://localhost:8081/api/products';
+  if (type) {
+    url += `?type=${encodeURIComponent(type)}`;
   }
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return await response.json();
+}

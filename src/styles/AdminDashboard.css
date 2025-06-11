@@ -1,0 +1,180 @@
+:root {
+  --green: #109e86;
+  --light-green: #9ce3d8;
+}
+
+/* کانتینر کلی */
+.admin-dashboard {
+  display: flex;
+  flex-direction: row-reverse; /* RTL: سایدبار سمت راست */
+  height: 100vh;              /* تمام ارتفاع صفحه */
+  overflow: hidden;
+}
+
+/* بخش محتوای اصلی (۷۵٪) */
+.admin-main {
+  flex: 3;
+  overflow-y: auto;
+  background: #fff;
+  padding: 24px;
+}
+
+/* سایدبار (۲۵٪) */
+.admin-sidebar {
+  flex: 1;
+  background: #e7f7f4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 32px;
+  box-shadow: -4px 0 8px rgba(0,0,0,0.05);
+}
+
+.sidebar-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.menu-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  padding: 0 16px;
+}
+
+.sidebar-nav button {
+  width: 100%;
+  background: #fff;
+  border: 1px solid var(--green);
+  border-radius: 24px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background .2s, color .2s;
+}
+
+.sidebar-nav button img {
+  flex-shrink: 0;
+}
+
+.sidebar-nav button span {
+  flex-grow: 1;
+  text-align: right;
+}
+
+.sidebar-nav button.active,
+.sidebar-nav button:hover {
+  background: var(--green);
+  color: #fff;
+}
+
+/* استایل بخش آمار فروش */
+.stats-page {
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.stats-title {
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+  color: var(--green);
+}
+
+/* صفحات دیگر (محصولات، سفارشات) */
+.products-page,
+.orders-page {
+  background: #fafafa;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.products-page h2,
+.orders-page h2 {
+  color: var(--green);
+  margin-bottom: 12px;
+}
+
+.orders-page {
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.orders-page h2 {
+  color: var(--green);
+  margin-bottom: 16px;
+  font-size: 1.5rem;
+}
+
+/* جدول سفارشی */
+.orders-table {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* سطر هدر */
+.orders-header {
+  display: flex;
+  padding: 12px;
+  background: var(--green);
+  color: #fff;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.orders-row {
+  display: flex;
+  padding: 16px;
+  border: 1px solid var(--green);
+  border-radius: 8px;
+  background: #fafafa;
+  color: #555;
+}
+
+/* ستون‌ها */
+.orders-header .col,
+.orders-row .col {
+  flex: 1;
+  text-align: center;
+}
+
+.orders-header .date,
+.orders-row .date {
+  flex: 1.2;
+}
+
+.orders-header .product,
+.orders-row .product {
+  flex: 1.5;
+}
+
+.orders-header .price,
+.orders-row .price {
+  flex: 1;
+}
+
+.products-page h2 {
+  color: var(--green);
+  margin-bottom: 16px;
+  font-size: 1.5rem;
+}
+
+.products-grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}

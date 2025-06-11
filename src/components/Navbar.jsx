@@ -51,6 +51,9 @@ const Navbar = ({ onSearch }) => {
           {open && (
             <ul className="profile-menu">
               <li onClick={() => navigate('/profile')}>پروفایل من</li>
+              <li onClick={() => { navigate('/admin'); }}>
+              داشبورد ادمین
+            </li>
               <li>
                 <button className="logout-btn" onClick={handleLogout}>
                   خروج

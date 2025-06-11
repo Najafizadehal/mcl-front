@@ -4,6 +4,7 @@ import Register       from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import Home           from './pages/Home';
 import ProtectedRoute from './routes/ProtectedRoute';
+import AdminDashboard from './pages/AdminDashboard'; 
 
 // صفحه‌ای که فقط برای کاربران خروج‌کرده در دسترس است
 const PublicOnly = ({ children }) =>
@@ -35,6 +36,7 @@ export default function App() {
       <Route element={<ProtectedRoute />}>
         <Route path="/"      element={<Home />} />
         <Route path="/home"  element={<Home />} />
+        <Route path="/admin" element={<AdminDashboard />} />
       </Route>
 
       {/* مسیرهای ناشناخته */}
