@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+// src/pages/AdminDashboard.jsx
+
+import React, { useState, useEffect } from 'react';
 import WaveHeader from '../components/WaveHeader';
 import ProductCard from '../components/productCart/ProductCard.jsx';
 import {
@@ -15,17 +17,61 @@ import menuIcon from '../assets/icons/menu.png';
 import statsIcon from '../assets/icons/stats.png';
 import productsIcon from '../assets/icons/products.png';
 import ordersIcon from '../assets/icons/orders.png';
+import addIcon from '../assets/icons/add.png';
+import uploadIcon from '../assets/icons/add.png'; // آیکون آپلود تصویر
+
 import '../styles/AdminDashboard.css';
+import {
+  // uploadProductImage,
+  // createProduct,
+  fetchProducts,
+  // deleteProduct,
+  // updateProduct,
+} from '../services/productService'; // فرض: مسیر درست به productService.js
 
 export default function AdminDashboard() {
   const [view, setView] = useState('stats');
+  const [products, setProducts] = useState([]);
+  const [productsLoading, setProductsLoading] = useState(false);
+  const [productsError, setProductsError] = useState(null);
+
+  // وقتی صفحه محصولات لود شود، لیست را از سرور بگیریم
+  useEffect(() => {
+    if (view === 'products') {
+      fetchProducts();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [view]);
+
+  const fetchProducts = async () => {
+    setProductsLoading(true);
+    setProductsError(null);
+    try {
+      const list = await fetchProducts();
+      setProducts(list);
+    } catch (err) {
+      console.error('خطا در دریافت محصولات:', err);
+      setProductsError('خطا در دریافت محصولات');
+    } finally {
+      setProductsLoading(false);
+    }
+  };
 
   const renderContent = () => {
     switch (view) {
       case 'stats':
         return <Statistics />;
       case 'products':
-        return <Products />;
+        return (
+          <Products
+            products={products}
+            loading={productsLoading}
+            error={productsError}
+            onRefresh={fetchProducts}
+          />
+        );
+      case 'add':
+        return <AddProduct onAdded={() => { setView('products'); }} />;
       case 'orders':
         return <Orders />;
       default:
@@ -70,6 +116,13 @@ export default function AdminDashboard() {
             <img src={ordersIcon} alt="سفارشات" width={20} height={20} />
             <span>سفارشات</span>
           </button>
+          <button
+            className={view === 'add' ? 'active' : ''}
+            onClick={() => setView('add')}
+          >
+            <img src={addIcon} alt="افزودن محصول" width={20} height={20} />
+            <span>افزودن محصول</span>
+          </button>
         </nav>
       </aside>
     </div>
@@ -102,73 +155,82 @@ function Statistics() {
             align="right"
             wrapperStyle={{ paddingBottom: 20 }}
           />
-          <Bar
-            dataKey="sold"
-            name="فروش رفته"
-            fill="var(--light-green)"
-            barSize={20}
-          />
-          <Bar
-            dataKey="total"
-            name="کل موجودی"
-            fill="var(--green)"
-            barSize={20}
-          />
+          <Bar dataKey="sold" name="فروش رفته" fill="var(--light-green)" barSize={20} />
+          <Bar dataKey="total" name="کل موجودی" fill="var(--green)" barSize={20} />
         </BarChart>
       </ResponsiveContainer>
     </div>
   );
 }
 
-function Products() {
-  const sampleProducts = [
-    { id: 1, title: 'گلس گوشی',       price: 120000, img: 'https://content.styleup.ir/uploads/2020/09/Buy-Price-super-d-screen-protector.jpg' },
-    { id: 2, title: ' اسپری تمیز کننده',     price: 90000,  img: 'https://abzarakmobile.com/wp-content/uploads/2020/04/%D8%A7%D8%B3%D9%BE%D8%B1%DB%8C-%D8%AA%D9%85%DB%8C%D8%B2-%DA%A9%D9%86%D9%86%D8%AF%D9%87-%DA%86%D8%B3%D8%A8-LCD-%D9%85%DA%A9%D8%A7%D9%86%DB%8C%DA%A9-%D9%85%D8%AF%D9%84-Mechanic-N9-n9.jpg' },
-    { id: 3, title: 'شارژر وایرلس',  price: 150000, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLKJJJ-7w0EbDCecLbXWkyZsiZlb76Ul4X8Q&s' },
-    { id: 4, title: 'هندزفری بلوتوث', price: 250000, img: 'https://janebi.com/janebi/9fd2/files/420214.jpg' },
-    { id: 5, title: 'کابل USB-C',     price: 40000,  img: 'https://matstore.ir/8889-superlarge_default/dobe-3m-type-c-usb-charging-cable-for-ps5-xbox-switch-mobile-phone.jpg' },
-    { id: 6, title: 'پاوربانک ۱۰ هزار', price: 300000, img: 'https://statics.basalam.com/public-18/users/XyjxeL/03-18/BOJj5q2eZ8b9fYALVi3wpYNCZO1S7UtvAkRqfE5NVWAD3JG8Vo.jpg_512X512X70.jpg' },
-    { id: 7, title: 'Galaxy A56', price: 300000, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrHBXecb0JuZLYkTHDoSNmv1JLIZH2R1a-HQ&s' },
-    { id: 8, title: ' Iphone 13 pro ', price: 300000, img: 'https://api2.zoomit.ir/media/638bb6a3da37f663eb456cfd?w=1920&q=75' },
-
-  ];
-
-  const handleAdd = item => {
-    console.log('افزودن به سبد:', item.title);
-    // اینجا منطق اضافه کردن به سبد واقعی رو بنویسید
+function Products({ products, loading, error, onRefresh }) {
+  const handleDelete = async (id) => {
+    if (!window.confirm('آیا از حذف این محصول مطمئن هستید؟')) return;
+    try {
+      // await deleteProduct(id);
+      alert('محصول حذف شد');
+      onRefresh();
+    } catch (err) {
+      console.error('خطا در حذف محصول:', err);
+      alert('خطا در حذف محصول');
+    }
   };
 
+  // می‌توانید handleUpdate را نیز اضافه کنید در صورت نیاز
+
+  if (loading) {
+    return <p>در حال بارگذاری محصولات...</p>;
+  }
+  if (error) {
+    return (
+      <div>
+        <p>{error}</p>
+        <button onClick={onRefresh}>تلاش مجدد</button>
+      </div>
+    );
+  }
   return (
     <div className="products-page">
       <h2>محصولات</h2>
-      <div className="products-grid">
-        {sampleProducts.map(prod => (
-          <ProductCard
-            key={prod.id}
-            title={prod.title}
-            price={(prod.price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-            img={prod.img}
-            onAdd={() => handleAdd(prod)}
-          />
-        ))}
-      </div>
+      {products.length === 0 ? (
+        <p>هیچ محصولی وجود ندارد.</p>
+      ) : (
+        <div className="products-grid">
+          {products.map(prod => (
+            <div key={prod.id} className="product-item-wrapper">
+              <ProductCard
+                title={prod.name}
+                price={prod.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                img={prod.imageUrl || ''}
+                onAdd={() => console.log('افزودن به سبد:', prod.name)}
+              />
+              <div className="product-actions">
+                {/* دکمه‌های حذف و ویرایش */}
+                <button
+                  className="action-btn delete-btn"
+                  onClick={() => handleDelete(prod.id)}
+                >
+                  حذف
+                </button>
+                {/* برای ویرایش می‌توانید مسیریابی به صفحه ویرایش اضافه کنید */}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
+
 function Orders() {
-  // داده‌های فیک سفارشات
+  // این بخش را متناسب با داده‌های سفارشات واقعی خود پر کنید
   const orders = [
     { id: 1, name: 'فاطمه', date: '1404/03/20', product: 'گلس شارژر', price: '300,000' },
-    { id: 2, name: 'سارا',  date: '1404/03/19', product: 'قاب گوشی', price: '120,000' },
-    { id: 3, name: 'علی',   date: '1404/03/18', product: 'هندزفری', price: '250,000' },
-    { id: 4, name: 'رضا',   date: '1404/03/17', product: 'آداپتور', price: '180,000' },
-    { id: 5, name: 'مینا',  date: '1404/03/16', product: 'پاوربانک', price: '350,000' },
-    { id: 6, name: 'امیر',  date: '1404/03/15', product: 'گلس شارژر', price: '300,000' },
+    // ... دیگر سفارش‌ها
   ];
 
   return (
     <div className="orders-page">
-       
       <h2>سفارشات</h2>
       <div className="orders-table">
         <div className="orders-header">
@@ -186,6 +248,125 @@ function Orders() {
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+function AddProduct({ onAdded }) {
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [price, setPrice] = useState('');
+  const [type, setType] = useState('PHONE');
+  const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleFileChange = e => {
+    const f = e.target.files && e.target.files[0];
+    if (f) {
+      setFile(f);
+    }
+  };
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    console.log('handleSubmit فراخوانی شد');
+
+    if (!name.trim() || !price) {
+      alert('نام و قیمت محصول الزامی است.');
+      return;
+    }
+    setLoading(true);
+    try {
+      let imageUrl = '';
+      if (file) {
+        console.log('در حال آپلود تصویر...');
+        // imageUrl = await uploadProductImage(file);
+        console.log('آدرس تصویر دریافت شد:', imageUrl);
+      }
+
+      const payload = {
+        name,
+        description,
+        price: parseFloat(price),
+        productType: type, // "PHONE","REPAIR","LCD","SMALLPARTS","ACCESSORIES"
+        imageUrl,
+      };
+      console.log('در حال ارسال payload به بک‌اند:', payload);
+      // const newProduct = await createProduct(payload);
+      // console.log('پاسخ بک‌اند:', newProduct);
+      alert('محصول با موفقیت اضافه شد!');
+      // ریست فرم
+      setName('');
+      setDescription('');
+      setPrice('');
+      setType('PHONE');
+      setFile(null);
+      // بازگشت به لیست محصولات
+      if (onAdded) onAdded();
+    } catch (err) {
+      console.error('خطا در ایجاد محصول:', err.response || err.message || err);
+      if (err.response) {
+        alert(`خطا از سمت سرور: ${err.response.status}`);
+      } else {
+        alert('خطا در ارسال درخواست. شبکه یا سرور در دسترس نیست.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="add-product-page">
+      <WaveHeader title="افزودن محصول" />
+      <form className="add-product-form" onSubmit={handleSubmit}>
+        <label htmlFor="file-upload" className="image-upload">
+          <div className="upload-icon">
+            <img src={uploadIcon} alt="آپلود" />
+          </div>
+          <p>
+            {file
+              ? file.name
+              : 'برای بارگذاری تصویر محصول کلیک کنید یا فایل را اینجا بکشید'}
+          </p>
+          <input
+            type="file"
+            id="file-upload"
+            accept="image/*"
+            onChange={handleFileChange}
+            hidden
+          />
+        </label>
+
+        <input
+          type="text"
+          placeholder="نام محصول"
+          value={name}
+          onChange={e => setName(e.target.value)}
+          required
+        />
+        <input
+          type="number"
+          placeholder="قیمت محصول"
+          value={price}
+          onChange={e => setPrice(e.target.value)}
+          required
+        />
+        <select value={type} onChange={e => setType(e.target.value)}>
+          <option value="PHONE">موبایل</option>
+          <option value="REPAIR">تعمیر</option>
+          <option value="LCD">LCD</option>
+          <option value="SMALLPARTS">قطعات کوچک</option>
+          <option value="ACCESSORIES">لوازم جانبی</option>
+        </select>
+        <textarea
+          placeholder="توضیحات"
+          value={description}
+          onChange={e => setDescription(e.target.value)}
+        />
+        <button type="submit" className="submit-btn" disabled={loading}>
+          {loading ? 'در حال ارسال...' : 'اضافه کردن محصول'}
+        </button>
+      </form>
     </div>
   );
 }

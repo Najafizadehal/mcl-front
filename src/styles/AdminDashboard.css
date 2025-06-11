@@ -178,3 +178,117 @@
   gap: 24px;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 }
+.add-product-page {
+  background: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  /* اگر می‌خواهید ارتفاع را محدود کنید می‌توانید min-height یا padding اضافی بدهید */
+}
+
+.add-product-form {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* کادر آپلود تصویر */
+.image-upload {
+  position: relative;
+  border: 1px dashed var(--green);
+  border-radius: 12px;
+  padding: 32px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+  margin-top: 20px;
+}
+.image-upload:hover {
+  border-color: var(--light-green);
+  background: #f9fefa;
+}
+.image-upload input {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+.upload-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.upload-icon img {
+  width: 48px;
+  height: 48px;
+  opacity: 0.6;
+}
+.image-upload p {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* فیلدهای ورود داده */
+.add-product-form input[type="text"],
+.add-product-form input[type="number"],
+.add-product-form select,
+.add-product-form textarea {
+  border: 1px solid var(--green);
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color .2s;
+}
+.add-product-form input:focus,
+.add-product-form select:focus,
+.add-product-form textarea:focus {
+  border-color: var(--light-green);
+}
+
+/* دکمه ارسال */
+.submit-btn {
+  background: var(--green);
+  color: #fff;
+  border: none;
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background .2s;
+}
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.submit-btn:hover:not(:disabled) {
+  background: var(--light-green);
+}
+
+/* برای لیست محصولات: اگر می‌خواهید دکمه‌های حذف/ویرایش کنار کارت نمایش داده شوند */
+.product-item-wrapper {
+  position: relative;
+}
+.product-actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+.product-actions .action-btn {
+  padding: 6px 12px;
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  transition: background .2s, color .2s;
+}
+.product-actions .delete-btn:hover {
+  background: #f8d7da;
+  border-color: #f5c6cb;
+  color: #721c24;
+}
