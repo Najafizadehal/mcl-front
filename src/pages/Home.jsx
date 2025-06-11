@@ -10,7 +10,7 @@ import iconAcc from '../assets/icons/accesories.png';
 import iconTools from '../assets/icons/repair.png';
 import iconMobile from '../assets/icons/mobile.png';
 // import iconMobile from '../assets/icons/mobile.png';
-import { fetchProducts } from '../services/productService';
+import { getAllProducts as fetchProducts } from '../services/productService';
 
 const categories = [
   { id: 1, label: 'قطعات ریز', icon: iconParts,  type: 'SMALLPARTS',  size: 64 },

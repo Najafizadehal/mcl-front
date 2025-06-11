@@ -21,8 +21,11 @@ import addIcon from '../assets/icons/add.png';
 import uploadIcon from '../assets/icons/add.png'; // آیکون آپلود تصویر
 
 import '../styles/AdminDashboard.css';
-import { fetchProducts as fetchProductsApi } from '../services/productService';
-export default function AdminDashboard() {
+import {
+  getAllProducts as fetchProductsApi,
+    uploadProductImage,
+    createProduct
+  } from '../services/productService';export default function AdminDashboard() {
   const [view, setView] = useState('stats');
   const [products, setProducts] = useState([]);
   const [productsLoading, setProductsLoading] = useState(false);
@@ -271,8 +274,6 @@ function AddProduct({ onAdded }) {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    console.log('handleSubmit فراخوانی شد');
-
     if (!name.trim() || !price) {
       alert('نام و قیمت محصول الزامی است.');
       return;
@@ -282,20 +283,19 @@ function AddProduct({ onAdded }) {
       let imageUrl = '';
       if (file) {
         console.log('در حال آپلود تصویر...');
-        // imageUrl = await uploadProductImage(file);
+        imageUrl = await uploadProductImage(file);
         console.log('آدرس تصویر دریافت شد:', imageUrl);
       }
-
       const payload = {
-        name,
-        description,
+        name: name.trim(),
+        description: description.trim(),
         price: parseFloat(price),
-        productType: type, // "PHONE","REPAIR","LCD","SMALLPARTS","ACCESSORIES"
-        imageUrl,
+        productType: type, // مقادیری: "PHONE","REPAIR","LCD","SMALLPARTS","ACCESSORIES"
+        imageUrl,          // اگر رشته خالی است، backend ممکن است default بگیرد
       };
       console.log('در حال ارسال payload به بک‌اند:', payload);
-      // const newProduct = await createProduct(payload);
-      // console.log('پاسخ بک‌اند:', newProduct);
+      const newProduct = await createProduct(payload);
+      console.log('پاسخ بک‌اند (محصول جدید):', newProduct);
       alert('محصول با موفقیت اضافه شد!');
       // ریست فرم
       setName('');
@@ -303,12 +303,12 @@ function AddProduct({ onAdded }) {
       setPrice('');
       setType('PHONE');
       setFile(null);
-      // بازگشت به لیست محصولات
+      // فراخوانی callback برای بارگذاری مجدد لیست محصولات
       if (onAdded) onAdded();
     } catch (err) {
       console.error('خطا در ایجاد محصول:', err.response || err.message || err);
       if (err.response) {
-        alert(`خطا از سمت سرور: ${err.response.status}`);
+        alert(`خطا از سمت سرور: ${err.response.status} - ${err.response.data?.message || ''}`);
       } else {
         alert('خطا در ارسال درخواست. شبکه یا سرور در دسترس نیست.');
       }
