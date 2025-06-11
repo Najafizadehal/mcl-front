@@ -23,8 +23,12 @@ const Login = () => {
     setLoading(true);
     setError('');
     try {
-      const { accessToken } = await loginRequest(username, password);
-      localStorage.setItem('token', accessToken);
+      // const { accessToken } = await loginRequest(username, password);
+      // localStorage.setItem('token', accessToken);
+      const { accessToken, refreshToken, user } = await loginRequest(username, password);
+        localStorage.setItem('token', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+        localStorage.setItem('user', JSON.stringify(user));
       navigate('/', { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || 'ورود ناموفق بود.');

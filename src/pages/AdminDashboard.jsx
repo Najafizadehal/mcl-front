@@ -21,14 +21,7 @@ import addIcon from '../assets/icons/add.png';
 import uploadIcon from '../assets/icons/add.png'; // آیکون آپلود تصویر
 
 import '../styles/AdminDashboard.css';
-import {
-  // uploadProductImage,
-  // createProduct,
-  fetchProducts,
-  // deleteProduct,
-  // updateProduct,
-} from '../services/productService'; // فرض: مسیر درست به productService.js
-
+import { fetchProducts as fetchProductsApi } from '../services/productService';
 export default function AdminDashboard() {
   const [view, setView] = useState('stats');
   const [products, setProducts] = useState([]);
@@ -36,18 +29,27 @@ export default function AdminDashboard() {
   const [productsError, setProductsError] = useState(null);
 
   // وقتی صفحه محصولات لود شود، لیست را از سرور بگیریم
-  useEffect(() => {
-    if (view === 'products') {
-      fetchProducts();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [view]);
+  // useEffect(() => {
+  //   if (view === 'products') {
+  //     fetchProducts();
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [view]);
 
-  const fetchProducts = async () => {
+  useEffect(() => {
+      if (view === 'products') {
+        loadProducts();
+      }
+    }, [view]);
+
+  // const fetchProducts = async () => {
+    const loadProducts = async () => {
+
     setProductsLoading(true);
     setProductsError(null);
     try {
-      const list = await fetchProducts();
+      // const list = await fetchProducts();
+      const list = await fetchProductsApi();
       setProducts(list);
     } catch (err) {
       console.error('خطا در دریافت محصولات:', err);
@@ -67,7 +69,7 @@ export default function AdminDashboard() {
             products={products}
             loading={productsLoading}
             error={productsError}
-            onRefresh={fetchProducts}
+            onRefresh={loadProducts}
           />
         );
       case 'add':
