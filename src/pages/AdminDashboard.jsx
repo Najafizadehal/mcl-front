@@ -20,7 +20,7 @@ import productsIcon from '../assets/icons/products.png';
 import ordersIcon from '../assets/icons/orders.png';
 import addIcon from '../assets/icons/add.png';
 import uploadIcon from '../assets/icons/add.png';
-import homeIcon from '../assets/icons/menu.png';
+import homeIcon from '../assets/logo.png';
 
 import '../styles/AdminDashboard.css';
 
@@ -91,7 +91,7 @@ export default function AdminDashboard() {
       <aside className="admin-sidebar">
         <div className="sidebar-logo">
           <button className="menu-btn">
-            <img src={menuIcon} alt="منو" width={24} height={24} />
+            <img src={homeIcon} alt="منو" width={40} height={60} />
           </button>
           <h1>MCL</h1>
         </div>

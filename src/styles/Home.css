@@ -218,6 +218,7 @@ body { padding-bottom: 40px; }
   border: none;
   cursor: pointer;
   padding: 0;
+  margin-top: 20px;
 }
 
 .profile-btn img {
