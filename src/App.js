@@ -4,9 +4,9 @@ import Register       from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import Home           from './pages/Home';
 import ProtectedRoute from './routes/ProtectedRoute';
-import AdminDashboard from './pages/AdminDashboard'; 
+import AdminDashboard from './pages/AdminDashboard';
 
-// صفحه‌ای که فقط برای کاربران خروج‌کرده در دسترس است
+// صفحه‌هایی که فقط وقتی لاگین نیستید در دسترس‌اند
 const PublicOnly = ({ children }) =>
   localStorage.getItem('token') ? <Navigate to="/" replace /> : children;
 
@@ -32,14 +32,14 @@ export default function App() {
       />
       <Route path="/forgot-password" element={<ForgotPassword />} />
 
-      {/* صفحات محافظت‌شده */}
+      {/* مسیرهای محافظت‌شده */}
       <Route element={<ProtectedRoute />}>
         <Route path="/"      element={<Home />} />
         <Route path="/home"  element={<Home />} />
         <Route path="/admin" element={<AdminDashboard />} />
       </Route>
 
-      {/* مسیرهای ناشناخته */}
+      {/* هر مسیر نامشخص → صفحه اصلی */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
