@@ -1,9 +1,26 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { logout as logoutRequest } from '../services/authService';
+import { Link } from 'react-router-dom';
+
 
 // ⬇️ URL تصویر آنلاین یا CDN
 const PROFILE_URL = 'https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTA1L3Y5MzctYWV3LTEzOS5qcGc.jpg';
+
+const AdminNavItem = ({ to, children, className = '' }) => {
+  const userRole = localStorage.getItem('userRole');
+  
+  // اگر کاربر ادمین نبود، چیزی رندر نکن
+  if (userRole !== 'ADMIN') {
+    return null;
+  }
+
+  return (
+    <Link to={to} className={className}>
+      {children}
+    </Link>
+  );
+};
 
 const Navbar = ({ onSearch }) => {
   const [open, setOpen]   = useState(false);
@@ -51,9 +68,11 @@ const Navbar = ({ onSearch }) => {
           {open && (
             <ul className="profile-menu">
               <li onClick={() => navigate('/profile')}>پروفایل من</li>
-              <li onClick={() => { navigate('/admin'); }}>
-              داشبورد ادمین
-            </li>
+              <li>
+                <AdminNavItem to="/admin">
+                  داشبورد ادمین
+                </AdminNavItem>
+              </li>
               <li>
                 <button className="logout-btn" onClick={handleLogout}>
                   خروج

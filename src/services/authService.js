@@ -1,4 +1,18 @@
 import api from './api';
+// import jwtDecode from 'jwt-decode';
+
+
+// export function getUserRoles() {
+//   const token = localStorage.getItem('token');
+//   if (!token) return [];
+//   try {
+//     const { authorities } = jwtDecode(token);
+//     // authorities شبیه [{authority:"ROLE_ADMIN"},…]
+//     return authorities.map(a => a.authority);
+//   } catch {
+//     return [];
+//   }
+// }
 
 
 /**
@@ -11,6 +25,7 @@ export const login = (username, password) =>
        const { user, accessToken, refreshToken } = res.data.result;
        localStorage.setItem('token', accessToken);
        localStorage.setItem('refreshToken', refreshToken);
+       localStorage.setItem('userRole', user.role);
        return { user, accessToken };
      });
 /**

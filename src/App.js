@@ -4,6 +4,7 @@ import Register       from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import Home           from './pages/Home';
 import ProtectedRoute from './routes/ProtectedRoute';
+import AdminRoute     from './routes/AdminRoute';
 import AdminDashboard from './pages/AdminDashboard';
 
 // صفحه‌هایی که فقط وقتی لاگین نیستید در دسترس‌اند
@@ -36,7 +37,11 @@ export default function App() {
       <Route element={<ProtectedRoute />}>
         <Route path="/"      element={<Home />} />
         <Route path="/home"  element={<Home />} />
-        <Route path="/admin" element={<AdminDashboard />} />
+      </Route>
+
+      {/* مسیرهای ادمین */}
+      <Route element={<AdminRoute />}>
+        <Route path="/admin/*" element={<AdminDashboard />} />
       </Route>
 
       {/* هر مسیر نامشخص → صفحه اصلی */}

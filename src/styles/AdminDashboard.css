@@ -80,6 +80,26 @@
   color: #fff;
 }
 
+/* خط جداکننده در منوی سایدبار */
+.sidebar-divider {
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.1);
+  margin: 16px 0;
+  width: 100%;
+}
+
+/* استایل برای دکمه بازگشت به صفحه اصلی */
+.sidebar-nav button:last-child {
+  margin-top: auto;  /* فاصله از دکمه‌های بالا */
+  border-color: #666;  /* رنگ خاکستری برای حاشیه */
+  color: #666;        /* رنگ خاکستری برای متن */
+}
+
+.sidebar-nav button:last-child:hover {
+  background-color: #666;  /* رنگ خاکستری در حالت هاور */
+  color: #fff;
+}
+
 /* استایل بخش آمار فروش */
 .stats-page {
   background: #fff;

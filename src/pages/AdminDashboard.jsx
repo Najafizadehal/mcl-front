@@ -1,6 +1,7 @@
 // src/pages/AdminDashboard.jsx
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import WaveHeader from '../components/WaveHeader';
 import ProductCard from '../components/productCart/ProductCard.jsx';
 import {
@@ -19,6 +20,7 @@ import productsIcon from '../assets/icons/products.png';
 import ordersIcon from '../assets/icons/orders.png';
 import addIcon from '../assets/icons/add.png';
 import uploadIcon from '../assets/icons/add.png';
+import homeIcon from '../assets/icons/menu.png';
 
 import '../styles/AdminDashboard.css';
 
@@ -34,6 +36,7 @@ import {
 /*  اصلی                                                                   */
 /* ---------------------------------------------------------------------- */
 export default function AdminDashboard() {
+  const navigate = useNavigate();
   const [view, setView] = useState('stats');
   const [products, setProducts] = useState([]);
   const [productsLoading, setProductsLoading] = useState(false);
@@ -117,6 +120,12 @@ export default function AdminDashboard() {
             icon={addIcon}
             label="افزودن محصول"
             onClick={() => setView('add')}
+          />
+          <div className="sidebar-divider" />
+          <SidebarBtn
+            icon={homeIcon}
+            label="بازگشت به صفحه اصلی"
+            onClick={() => navigate('/')}
           />
         </nav>
       </aside>
