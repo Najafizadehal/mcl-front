@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import WaveHeader from '../components/WaveHeader';
 import ProductCard from '../components/productCart/ProductCard.jsx';
+import { getAllOrders, cancelOrder } from '../services/orderService';
+
 import {
   ResponsiveContainer,
   BarChart,
@@ -307,31 +309,142 @@ function Products({ products, loading, error, onRefresh }) {
 /* ---------------------------------------------------------------------- */
 /*  سفارشات نمونه                                                         */
 /* ---------------------------------------------------------------------- */
+
+
+
+
 function Orders() {
-  const orders = [
-    { id: 1, name: 'فاطمه', date: '1404/03/20', product: 'گلس شارژر', price: '300,000' },
-  ];
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+
+  useEffect(() => {
+    loadOrders();
+  }, []);
+
+  const loadOrders = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const ordersList = await getAllOrders();
+      setOrders(ordersList);
+    } catch (err) {
+      console.error('خطا در دریافت سفارشات:', err);
+      setError('خطا در دریافت سفارشات');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCancelOrder = async (orderId) => {
+    if (!window.confirm('آیا از کنسلی این سفارش مطمئن هستید؟')) return;
+    
+    try {
+      await cancelOrder(orderId);
+      alert('سفارش با موفقیت کنسل شد');
+      loadOrders(); // بارگذاری مجدد لیست
+    } catch (err) {
+      console.error('خطا در کنسلی سفارش:', err);
+      alert('خطا در کنسلی سفارش');
+    }
+  };
+
+  const showOrderDetails = (order) => {
+    setSelectedOrder(order);
+  };
+
+  if (loading) return <p>در حال بارگذاری سفارشات...</p>;
+  if (error) return <p className="error">{error}</p>;
 
   return (
     <div className="orders-page">
-      <h2>سفارشات</h2>
+      <h2>سفارشات کاربران</h2>
+      
       <div className="orders-table">
         <div className="orders-header">
-          <div className="col name">نام</div>
-          <div className="col date">تاریخ</div>
-          <div className="col product">محصول</div>
-          <div className="col price">قیمت</div>
+          <div className="col">شماره سفارش</div>
+          <div className="col">کاربر</div>
+          <div className="col">تاریخ</div>
+          <div className="col">مبلغ کل</div>
+          <div className="col">وضعیت</div>
+          <div className="col">عملیات</div>
         </div>
 
-        {orders.map((o) => (
-          <div key={o.id} className="orders-row">
-            <div className="col name">{o.name}</div>
-            <div className="col date">{o.date}</div>
-            <div className="col product">{o.product}</div>
-            <div className="col price">{o.price}</div>
-          </div>
-        ))}
+        {orders.map((order) => (
+  <div key={order.id} className="orders-row">
+    <div className="col">{order.id}</div>
+    <div className="col">
+      {order.user ? order.user.username : 'کاربر حذف شده'}
+    </div>
+    <div className="col">
+      {order.orderDate ? new Date(order.orderDate).toLocaleDateString('fa-IR') : 'نامشخص'}
+    </div>
+    <div className="col">
+      {order.totalAmount ? order.totalAmount.toLocaleString('fa-IR') + ' تومان' : 'نامشخص'}
+    </div>
+    <div className="col status-badge" data-status={order.status?.toLowerCase() || 'unknown'}>
+      {order.status || 'نامشخص'}
+    </div>
+    <div className="col actions">
+      <button 
+        className="details-btn"
+        onClick={() => showOrderDetails(order)}
+      >
+        جزئیات
+      </button>
+      {order.status === 'PENDING' && (
+        <button
+          className="cancel-btn"
+          onClick={() => handleCancelOrder(order.id)}
+        >
+          کنسل
+        </button>
+      )}
+    </div>
+  </div>
+))}
       </div>
+
+      {/* مودال جزئیات سفارش */}
+      {selectedOrder && (
+        <div className="order-details-modal">
+          <div className="modal-content">
+            <h3>جزئیات سفارش #{selectedOrder.id}</h3>
+            <button 
+              className="close-btn"
+              onClick={() => setSelectedOrder(null)}
+            >
+              &times;
+            </button>
+            
+            <div className="order-info">
+              <p><strong>کاربر:</strong> {selectedOrder.user.username}</p>
+              <p><strong>تاریخ:</strong> {new Date(selectedOrder.orderDate).toLocaleString('fa-IR')}</p>
+              <p><strong>وضعیت:</strong> <span className="status-badge" data-status={selectedOrder.status.toLowerCase()}>{selectedOrder.status}</span></p>
+              <p><strong>مبلغ کل:</strong> {selectedOrder.totalAmount.toLocaleString('fa-IR')} تومان</p>
+            </div>
+
+            <h4>محصولات:</h4>
+            <div className="order-items">
+              {selectedOrder.items.map((item) => (
+                <div key={item.id} className="order-item">
+                  <img 
+                    src={item.product.imageUrl || '/placeholder-product.png'} 
+                    alt={item.product.name}
+                    width={50}
+                    height={50}
+                  />
+                  <div className="item-info">
+                    <p>{item.product.name}</p>
+                    <p>{item.quantity} عدد × {item.priceAtPurchase.toLocaleString('fa-IR')} تومان</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
