@@ -346,6 +346,7 @@
 }
 
 /* فیلدهای ورودی داخل مودال */
+.edit-modal input[type="file"],
 .edit-modal input[type="text"],
 .edit-modal input[type="number"],
 .edit-modal textarea {
@@ -455,6 +456,7 @@
   padding: 6px 12px;
   border-radius: 4px;
   cursor: pointer;
+  margin-right: 15px;
 }
 
 /* استایل وضعیت سفارش */
@@ -544,4 +546,85 @@
 
 .item-info {
   flex-grow: 1;
+}
+
+/* استایل‌های جدید برای مودال ویرایش */
+.edit-modal .form-group {
+  margin-bottom: 15px;
+}
+
+.edit-modal .form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.edit-modal input[type="file"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.image-preview {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.image-preview img {
+  border: 1px solid #eee;
+  margin-bottom: 5px;
+}
+
+.image-preview p {
+  font-size: 0.8em;
+  color: #666;
+}
+
+/* استایل دکمه‌های مودال در حالت loading */
+.modal-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.edit-modal .form-group input[type="file"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--green);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.edit-modal .form-group input[type="file"]:hover {
+  border-color: var(--light-green);
+}
+
+.edit-modal .form-group input[type="file"]:focus {
+  outline: none;
+  border-color: var(--light-green);
+  box-shadow: 0 0 0 2px rgba(16, 158, 134, 0.2);
+}
+
+/* برای نمایش متن دکمه آپلود */
+.edit-modal .form-group input[type="file"]::file-selector-button {
+  visibility: hidden;
+  width: 0;
+  padding: 0;
+}
+
+.edit-modal .form-group input[type="file"]::before {
+  content: 'انتخاب فایل';
+  display: inline-block;
+  background: var(--green);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  margin-left: 8px;
+}
+
+.edit-modal .form-group input[type="file"]:hover::before {
+  background: var(--light-green);
 }

@@ -187,6 +187,9 @@ function Products({ products, loading, error, onRefresh }) {
   const [editName, setEditName] = useState('');
   const [editDesc, setEditDesc] = useState('');
   const [editPrice, setEditPrice] = useState('');
+  const [editFile, setEditFile] = useState(null);
+  const [editImageUrl, setEditImageUrl] = useState('');
+  const [editLoading, setEditLoading] = useState(false);
 
   /* حذف --------------------------------------------------------------- */
   const handleDelete = async (id) => {
@@ -207,25 +210,44 @@ function Products({ products, loading, error, onRefresh }) {
     setEditName(prod.name);
     setEditDesc(prod.description || '');
     setEditPrice(prod.price);
+    setEditImageUrl(prod.imageUrl || '');
+    setEditFile(null);
     setShowEdit(true);
   };
 
   /* ذخیره تغییرات ---------------------------------------------------- */
   const saveEdit = async () => {
     try {
+      setEditLoading(true);
+      
+      // اگر فایل جدید انتخاب شده، آن را آپلود کنید
+      let newImageUrl = editImageUrl;
+      if (editFile) {
+        try {
+          newImageUrl = await uploadProductImage(editFile);
+        } catch (err) {
+          console.error('خطا در آپلود تصویر:', err);
+          alert('خطا در آپلود تصویر');
+          return;
+        }
+      }
+
       await updateProduct(editing.id, {
         name: editName.trim(),
         description: editDesc.trim(),
         price: parseFloat(editPrice),
         productType: editing.productType,
-        imageUrl: editing.imageUrl,
+        imageUrl: newImageUrl,
       });
-      alert('محصول بروزرسانی شد');
+      
+      alert('محصول با موفقیت بروزرسانی شد');
       setShowEdit(false);
       onRefresh();
     } catch (err) {
       console.error('خطا در بروزرسانی محصول:', err);
       alert('خطا در بروزرسانی محصول');
+    } finally {
+      setEditLoading(false);
     }
   };
 
@@ -273,35 +295,63 @@ function Products({ products, loading, error, onRefresh }) {
 
       {/* مودال ویرایش -------------------------------------------------- */}
       {showEdit && (
-        <div className="modal-overlay">
-          <div className="edit-modal">
-            <h3>اصلاح محصول</h3>
+  <div className="modal-overlay">
+    <div className="edit-modal">
+      <h3>ویرایش محصول</h3>
 
-            <input
-              type="text"
-              value={editName}
-              onChange={(e) => setEditName(e.target.value)}
-              placeholder="نام محصول"
-            />
-            <input
-              type="number"
-              value={editPrice}
-              onChange={(e) => setEditPrice(e.target.value)}
-              placeholder="قیمت محصول"
-            />
-            <textarea
-              value={editDesc}
-              onChange={(e) => setEditDesc(e.target.value)}
-              placeholder="توضیحات"
-            />
+      {/* پیش‌نمایش تصویر فعلی */}
+      {/* {editImageUrl && ( */}
+      <div className="form-group">
+        <label htmlFor="edit-image">تصویر جدید (اختیاری)</label>
+        <input
+          id="edit-image"
+          type="file"
+          accept="image/*"
+          onChange={(e) => setEditFile(e.target.files?.[0])}
+          disabled={editLoading}
+        />
+      </div>
+      {/* )} */}
 
-            <div className="modal-actions">
-              <button onClick={saveEdit}>ذخیره</button>
-              <button onClick={() => setShowEdit(false)}>انصراف</button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* فیلدهای دیگر بدون تغییر */}
+      <input
+        type="text"
+        value={editName}
+        onChange={(e) => setEditName(e.target.value)}
+        placeholder="نام محصول"
+        disabled={editLoading}
+      />
+      <input
+        type="number"
+        value={editPrice}
+        onChange={(e) => setEditPrice(e.target.value)}
+        placeholder="قیمت محصول"
+        disabled={editLoading}
+      />
+      <textarea
+        value={editDesc}
+        onChange={(e) => setEditDesc(e.target.value)}
+        placeholder="توضیحات"
+        disabled={editLoading}
+      />
+
+      <div className="modal-actions">
+        <button 
+          onClick={saveEdit} 
+          disabled={editLoading}
+        >
+          {editLoading ? 'در حال ذخیره...' : 'ذخیره تغییرات'}
+        </button>
+        <button 
+          onClick={() => setShowEdit(false)}
+          disabled={editLoading}
+        >
+          انصراف
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 }
