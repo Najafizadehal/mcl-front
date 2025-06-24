@@ -11,10 +11,19 @@ const PROFILE_URL = 'https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZ
 const Navbar = ({ onSearch, cart, cartItems, onIncrement, onDecrement }) => {
   const [open, setOpen]   = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const menuRef           = useRef(null);
   const cartBtnRef        = useRef(null);
   const [cartModalStyle, setCartModalStyle] = useState({});
   const navigate          = useNavigate();
+
+  useEffect(() => {
+    const onScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   /* بستن منو با کلیک بیرون */
   useEffect(() => {
@@ -63,7 +72,7 @@ const Navbar = ({ onSearch, cart, cartItems, onIncrement, onDecrement }) => {
   };
 
   return (
-    <header className="navbar">
+    <header className={`navbar${scrolled ? ' navbar-scrolled' : ''}`}>
       {/* ───── راستِ نوار: برند ───── */}
       <div className="brand-group" style={{ display: 'flex', alignItems: 'center', gap: '12px', position: 'relative' }}>
         <h1 className="brand">Mobile Center Lamerd</h1>
