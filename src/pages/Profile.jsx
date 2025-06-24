@@ -24,7 +24,7 @@ import addIcon from '../assets/icons/add.png';
 import uploadIcon from '../assets/icons/add.png';
 import homeIcon from '../assets/logo.png';
 
-import '../styles/AdminDashboard.css';
+import '../styles/Profile.css';
 
 import {
   getAllProducts as fetchProductsApi,
@@ -37,12 +37,23 @@ import {
 /* ---------------------------------------------------------------------- */
 /*  اصلی                                                                   */
 /* ---------------------------------------------------------------------- */
-export default function AdminDashboard() {
+export default function Profile() {
   const navigate = useNavigate();
-  const [view, setView] = useState('stats');
+  const [view, setView] = useState('');
   const [products, setProducts] = useState([]);
   const [productsLoading, setProductsLoading] = useState(false);
   const [productsError, setProductsError] = useState(null);
+  const [userRole, setUserRole] = useState(null);
+
+  useEffect(() => {
+    const role = localStorage.getItem('userRole');
+    setUserRole(role);
+    if (role === 'ADMIN') {
+      setView('stats');
+    } else {
+      setView('orders');
+    }
+  }, []);
 
   /*‌ هنگام نمایش صفحهٔ محصولات، لیست را بار بگیر */
   useEffect(() => {
@@ -66,18 +77,18 @@ export default function AdminDashboard() {
   const renderContent = () => {
     switch (view) {
       case 'stats':
-        return <Statistics />;
+        return userRole === 'ADMIN' ? <Statistics /> : null;
       case 'products':
-        return (
+        return userRole === 'ADMIN' ? (
           <Products
             products={products}
             loading={productsLoading}
             error={productsError}
             onRefresh={loadProducts}
           />
-        );
+        ) : null;
       case 'add':
-        return <AddProduct onAdded={() => setView('products')} />;
+        return userRole === 'ADMIN' ? <AddProduct onAdded={() => setView('products')} /> : null;
       case 'orders':
         return <Orders />;
       default:
@@ -95,34 +106,40 @@ export default function AdminDashboard() {
           <button className="menu-btn">
             <img src={homeIcon} alt="منو" width={40} height={60} />
           </button>
-          <h1>MCL</h1>
+          <h1>پروفایل</h1>
         </div>
 
         <nav className="sidebar-nav">
-          <SidebarBtn
-            active={view === 'stats'}
-            icon={statsIcon}
-            label="آمار فروش"
-            onClick={() => setView('stats')}
-          />
-          <SidebarBtn
-            active={view === 'products'}
-            icon={productsIcon}
-            label="محصولات"
-            onClick={() => setView('products')}
-          />
+          {userRole === 'ADMIN' && (
+            <>
+              <SidebarBtn
+                active={view === 'stats'}
+                icon={statsIcon}
+                label="آمار فروش"
+                onClick={() => setView('stats')}
+              />
+              <SidebarBtn
+                active={view === 'products'}
+                icon={productsIcon}
+                label="محصولات"
+                onClick={() => setView('products')}
+              />
+            </>
+          )}
           <SidebarBtn
             active={view === 'orders'}
             icon={ordersIcon}
             label="سفارشات"
             onClick={() => setView('orders')}
           />
-          <SidebarBtn
-            active={view === 'add'}
-            icon={addIcon}
-            label="افزودن محصول"
-            onClick={() => setView('add')}
-          />
+          {userRole === 'ADMIN' && (
+            <SidebarBtn
+              active={view === 'add'}
+              icon={addIcon}
+              label="افزودن محصول"
+              onClick={() => setView('add')}
+            />
+          )}
           <div className="sidebar-divider" />
           <SidebarBtn
             icon={homeIcon}
