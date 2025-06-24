@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/Home.css';
-import Navbar from '../components/Navbar';
+// import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
 import BestSellers from '../components/BestSellers';
 import Footer from '../components/Footer';
@@ -29,7 +29,7 @@ const positions = [
   { x: 780, y: 240, id: 5 },
 ];
 
-const Home = () => {
+const Home = ({ cart, onAdd, onIncrement, onDecrement }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -59,12 +59,11 @@ const Home = () => {
     loadProducts(newSelected ? cat.type : null);
   };
 
-  const handleAdd = item => console.log('افزودن به سبد:', item.name);
   const handleSearch = text => console.log('جست‌وجو:', text);
 
   return (
     <div className="home2">
-      <Navbar onSearch={handleSearch} />
+      {/* <Navbar onSearch={handleSearch} /> */}
       <Hero
         categories={categories}
         positions={positions}
@@ -83,7 +82,10 @@ const Home = () => {
             price: Number(p.price).toLocaleString(),
             img: p.imageUrl,
           }))}
-          onAdd={handleAdd}
+          onAdd={onAdd}
+          cart={cart}
+          onIncrement={onIncrement}
+          onDecrement={onDecrement}
         />
       )}
       <Footer />

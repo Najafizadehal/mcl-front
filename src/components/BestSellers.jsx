@@ -1,7 +1,7 @@
 import React from 'react';
 import ProductCard from './productCart/ProductCard';
 
-const BestSellers = ({ items, onAdd }) => (
+const BestSellers = ({ items, onAdd, cart, onIncrement, onDecrement }) => (
   <section className="best-sellers">
     <h2>محصولات پرفروش</h2>
     <div className="product-strip">
@@ -12,6 +12,9 @@ const BestSellers = ({ items, onAdd }) => (
           price={p.price}
           img={p.img}
           onAdd={() => onAdd(p)}
+          quantity={cart[p.id]?.quantity || 0}
+          onIncrement={() => onIncrement(p)}
+          onDecrement={() => onDecrement(p)}
         />
       ))}
     </div>

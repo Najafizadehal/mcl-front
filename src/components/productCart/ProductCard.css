@@ -1,80 +1,107 @@
 /* ProductCard.css */
 .product-card {
     flex: 0 0 260px;
-    height: 280px;
+    height: 270px;
     background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.10);
     display: flex;
     flex-direction: column;
-    padding: 12px;
-  }
-  
-  .product-card__image-wrapper {
+    padding: 16px 14px 14px 14px;
+    border: 1.5px solid #f2f2f2;
+    transition: box-shadow 0.2s, border 0.2s, transform 0.15s;
+    position: relative;
+}
+
+.product-card:hover {
+    box-shadow: 0 8px 24px rgba(0,0,0,0.13);
+    border: 1.5px solid var(--green, #1dbf73);
+    transform: translateY(-3px) scale(1.02);
+}
+
+.product-card__image-wrapper {
     width: 100%;
-    height: 180px;
+    height: 170px;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #fff;  /* رنگ پس‌زمینه برای placeholder */
-    position: relative;  /* برای قرار دادن spinner در مرکز */
-  }
-  
-  /* استایل برای placeholder */
-  .image-placeholder {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #fff;
-  }
-  
-  /* استایل برای loading spinner */
-  .loading-spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid #fff;
-    border-top: 3px solid var(--green);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  
-  .product-card__image-wrapper img {
+    background: #f8fafb;
+    border-radius: 12px;
+    margin-bottom: 10px;
+}
+
+.product-card__image-wrapper img {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
-    transition: opacity 0.3s ease;  /* انیمیشن fade برای تصاویر */
-  }
-  
-  .product-card h3 {
-    font-size: 15px;
-    margin: 8px 0 4px;
-  }
-  
-  .product-card .price {
-    color: var(--green);
-    font-weight: 600;
-    margin-bottom: 8px;
-  }
-  
-  .product-card .add-btn {
+    transition: opacity 0.3s ease;
+}
+
+.product-card h3 {
+    font-size: 1.08rem;
+    margin: 0 0 4px 0;
+    font-weight: 700;
+    color: #222;
+    text-align: right;
+}
+
+.product-card .price {
+    color: var(--green, #1dbf73);
+    font-weight: 700;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    text-align: right;
+}
+
+.product-card .add-btn {
     margin-top: auto;
-    background: var(--green);
+    background: var(--green, #1dbf73);
     color: #fff;
     border: none;
     border-radius: 8px;
-    padding: 6px 0;
+    padding: 8px 0;
     cursor: pointer;
-  }
-  
-  .product-card .add-btn:hover {
-    opacity: 0.9;
-  }
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background 0.2s;
+    box-shadow: 0 2px 8px rgba(30,191,115,0.07);
+}
+
+.product-card .add-btn:hover {
+    background: #17a864;
+}
+
+.cart-qty-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    justify-content: flex-end;
+}
+
+.qty-btn {
+    background: #f2f2f2;
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background 0.2s, border 0.2s;
+    color: #222;
+}
+
+.qty-btn:hover {
+    background: #e0f7ef;
+    border: 1.5px solid var(--green, #1dbf73);
+}
+
+.qty-value {
+    min-width: 28px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #1dbf73;
+}
   
