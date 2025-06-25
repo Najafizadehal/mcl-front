@@ -3,7 +3,7 @@ import ProductCard from './productCart/ProductCard';
 
 const BestSellers = ({ items, onAdd, cart, onIncrement, onDecrement }) => (
   <section className="best-sellers">
-    <h2>محصولات پرفروش</h2>
+    {/* <h2>محصولات</h2> */}
     <div className="product-strip">
       {items.map(p => (
         <ProductCard

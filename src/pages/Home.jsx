@@ -9,7 +9,6 @@ import iconParts from '../assets/icons/smallpart.png';
 import iconAcc from '../assets/icons/accesories.png';
 import iconTools from '../assets/icons/repair.png';
 import iconMobile from '../assets/icons/mobile.png';
-// import iconMobile from '../assets/icons/mobile.png';
 import { getAllProducts as fetchProducts } from '../services/productService';
 
 const categories = [
@@ -19,7 +18,6 @@ const categories = [
   { id: 4, label: 'ابزارآلات',  icon: iconTools,  type: 'REPAIR',     size: 57 },
   { id: 5, label: 'موبایل',     icon: iconMobile, type: 'PHONE',      size: 64 },
 ];
-
 
 const positions = [
   { x: 200, y: 166, id: 1 },
@@ -34,6 +32,7 @@ const Home = ({ cart, onAdd, onIncrement, onDecrement }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
+  const [searchText, setSearchText] = useState("");
 
   const loadProducts = async (type) => {
     setLoading(true);
@@ -59,7 +58,10 @@ const Home = ({ cart, onAdd, onIncrement, onDecrement }) => {
     loadProducts(newSelected ? cat.type : null);
   };
 
-  const handleSearch = text => console.log('جست‌وجو:', text);
+  // فیلتر محصولات بر اساس جستجو
+  const filteredProducts = products.filter(p =>
+    p.name && p.name.toLowerCase().includes(searchText.toLowerCase())
+  );
 
   return (
     <div className="home2">
@@ -70,13 +72,24 @@ const Home = ({ cart, onAdd, onIncrement, onDecrement }) => {
         onCategoryClick={handleCategory}
         selectedId={selectedId}
       />
+      {/* سرچ باکس */}
+      <div style={{ display: 'flex', justifyContent: 'center', margin: '24px 0 0 0' }}>
+        <input
+          className="search"
+          type="text"
+          placeholder="جستجوی محصول..."
+          value={searchText}
+          onChange={e => setSearchText(e.target.value)}
+          style={{ background: '#3fbf9f', color: '#fff', borderRadius: 8, maxWidth: 320 }}
+        />
+      </div>
       {loading ? (
         <p className="loading-text">در حال بارگذاری محصولات...</p>
       ) : error ? (
         <p className="error-text">{error}</p>
       ) : (
         <BestSellers
-          items={products.map(p => ({
+          items={filteredProducts.map(p => ({
             id: p.id,
             title: p.name,
             price: Number(p.price).toLocaleString(),

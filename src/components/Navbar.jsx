@@ -108,15 +108,19 @@ const Navbar = ({ onSearch, cart, cartItems, onIncrement, onDecrement }) => {
         </button>
       </div>
 
-      {/* ───── چپِ نوار: جست‌وجو + پروفایل ───── */}
+      {/* ───── چپِ نوار: نمایش یوزرنیم + پروفایل ───── */}
       <div className="search-group">
-        <input
-          className="search"
-          type="text"
-          placeholder="جست‎وجو کنید"
-          onKeyDown={e => e.key === 'Enter' && onSearch?.(e.target.value)}
-        />
-
+        {/* نمایش یوزرنیم */}
+        <div className="username-display" style={{ color: '#fff', fontWeight: 600, marginLeft: 16, marginRight: 8,marginTop: 0, fontSize: 16 }}>
+          {(() => {
+            try {
+              const user = JSON.parse(localStorage.getItem('user'));
+              return user?.username || 'کاربر';
+            } catch {
+              return 'کاربر';
+            }
+          })()}
+        </div>
         <div className="profile-wrapper" ref={menuRef}>
           <button
             className="profile-btn"
