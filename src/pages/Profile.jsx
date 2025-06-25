@@ -16,6 +16,7 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
+import { getCurrentUser, updateUser } from '../services/authService';
 import menuIcon from '../assets/icons/menu.png';
 import statsIcon from '../assets/icons/stats.png';
 import productsIcon from '../assets/icons/products.png';
@@ -23,6 +24,7 @@ import ordersIcon from '../assets/icons/orders.png';
 import addIcon from '../assets/icons/add.png';
 import uploadIcon from '../assets/icons/add.png';
 import homeIcon from '../assets/logo.png';
+// import profileIcon from '../assets/icons/profile.svg';
 
 import '../styles/Profile.css';
 
@@ -60,6 +62,14 @@ export default function Profile() {
     if (view === 'products') loadProducts();
   }, [view]);
 
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    getCurrentUser()
+      .then(user => setCurrentUser(user))
+      .catch(() => setCurrentUser(null));
+  }, []);
+
   const loadProducts = async () => {
     setProductsLoading(true);
     setProductsError(null);
@@ -91,6 +101,8 @@ export default function Profile() {
         return userRole === 'ADMIN' ? <AddProduct onAdded={() => setView('products')} /> : null;
       case 'orders':
         return <Orders />;
+      case 'myinfo':
+        return <MyInfo />;
       default:
         return null;
     }
@@ -126,6 +138,12 @@ export default function Profile() {
               />
             </>
           )}
+          <SidebarBtn
+            active={view === 'myinfo'}
+            icon={homeIcon}
+            label="مشخصات من"
+            onClick={() => setView('myinfo')}
+          />
           <SidebarBtn
             active={view === 'orders'}
             icon={ordersIcon}
@@ -623,6 +641,195 @@ function AddProduct({ onAdded }) {
           {loading ? 'در حال ارسال…' : 'اضافه کردن محصول'}
         </button>
       </form>
+    </div>
+  );
+}
+
+function MyInfo() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [form, setForm] = useState({
+    firstName: '',
+    lastName: '',
+    username: '',
+    password: '',
+    phoneNumber: ''
+  });
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(null);
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    getCurrentUser()
+      .then(u => {
+        setUser(u);
+        setForm({
+          firstName: u.firstName || '',
+          lastName: u.lastName || '',
+          username: u.username || '',
+          password: '',
+          phoneNumber: u.phoneNumber || ''
+        });
+        setLoading(false);
+      })
+      .catch(() => {
+        setError('مشخصات کاربر یافت نشد.');
+        setLoading(false);
+      });
+  }, [success]);
+
+  const handleChange = e => {
+    const { name, value } = e.target;
+    setForm(f => ({ ...f, [name]: value }));
+  };
+
+  const handleEdit = () => {
+    setEditMode(true);
+    setSuccess(false);
+    setSaveError(null);
+  };
+
+  const handleCancel = () => {
+    setEditMode(false);
+    setSaveError(null);
+    setSuccess(false);
+    setForm({
+      firstName: user.firstName || '',
+      lastName: user.lastName || '',
+      username: user.username || '',
+      password: '',
+      phoneNumber: user.phoneNumber || ''
+    });
+  };
+
+  const handleSave = async e => {
+    e.preventDefault();
+    setSaving(true);
+    setSaveError(null);
+    setSuccess(false);
+    try {
+      await updateUser(user.publicId, {
+        firstname: form.firstName,
+        lastname: form.lastName,
+        username: form.username,
+        password: form.password || undefined,
+        phoneNumber: form.phoneNumber
+      });
+      setEditMode(false);
+      setSuccess(true);
+    } catch (err) {
+      setSaveError('خطا در ذخیره اطلاعات.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) return <div style={{padding: 32}}>در حال دریافت اطلاعات کاربر...</div>;
+  if (error) return <div style={{padding: 32}}>{error}</div>;
+  if (!user) return null;
+
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh', background: 'none' }}>
+      <div style={{
+        background: '#fff',
+        borderRadius: 20,
+        boxShadow: '0 6px 32px rgba(63,191,159,0.13)',
+        border: '1.5px solid var(--green, #3fbf9f)',
+        padding: '40px 36px 32px 36px',
+        minWidth: 340,
+        maxWidth: 400,
+        width: '100%',
+        marginTop: 30,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}>
+        <div style={{
+          width: 80,
+          height: 80,
+          borderRadius: '50%',
+          background: 'linear-gradient(135deg, #3fbf9f 60%, #e0f7f4 100%)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: 18,
+        }}>
+          <svg width="48" height="48" fill="#fff" viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"/></svg>
+        </div>
+        <h2 style={{
+          color: 'var(--green, #3fbf9f)',
+          fontWeight: 800,
+          fontSize: 22,
+          marginBottom: 24,
+          textAlign: 'center',
+          letterSpacing: 1
+        }}>مشخصات من</h2>
+        {editMode ? (
+          <form onSubmit={handleSave} style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <EditField label="نام کاربری" name="username" value={form.username} onChange={handleChange} />
+            <EditField label="نام کوچک" name="firstName" value={form.firstName} onChange={handleChange} />
+            <EditField label="نام بزرگ" name="lastName" value={form.lastName} onChange={handleChange} />
+            <EditField label="شماره تلفن" name="phoneNumber" value={form.phoneNumber} onChange={handleChange} />
+            <EditField label="رمز عبور جدید" name="password" value={form.password} onChange={handleChange} type="password" placeholder="در صورت نیاز به تغییر" />
+            <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
+              <button type="submit" disabled={saving} style={{ background: 'var(--green, #3fbf9f)', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 24px', fontWeight: 700, fontSize: 15, cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.7 : 1 }}>ذخیره</button>
+              <button type="button" onClick={handleCancel} style={{ background: '#eee', color: '#333', border: 'none', borderRadius: 8, padding: '10px 24px', fontWeight: 700, fontSize: 15, cursor: 'pointer' }}>انصراف</button>
+            </div>
+            {saveError && <div style={{ color: 'red', marginTop: 8 }}>{saveError}</div>}
+            {success && <div style={{ color: 'var(--green, #3fbf9f)', marginTop: 8 }}>اطلاعات با موفقیت ذخیره شد.</div>}
+          </form>
+        ) : (
+          <>
+            <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <InfoRow label="نام کاربری" value={user.username} />
+              <InfoRow label="نام کوچک" value={user.firstName} />
+              <InfoRow label="نام بزرگ" value={user.lastName} />
+              <InfoRow label="شماره تلفن" value={user.phoneNumber} />
+            </div>
+            <button onClick={handleEdit} style={{ marginTop: 24, background: 'var(--green, #3fbf9f)', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 32px', fontWeight: 700, fontSize: 15, cursor: 'pointer' }}>ویرایش</button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function EditField({ label, name, value, onChange, type = 'text', placeholder }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <label htmlFor={name} style={{ color: '#222', fontWeight: 700, fontSize: 15, marginBottom: 2 }}>{label}:</label>
+      <input
+        id={name}
+        name={name}
+        type={type}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        style={{
+          border: '1.5px solid var(--green, #3fbf9f)',
+          borderRadius: 7,
+          padding: '8px 12px',
+          fontSize: 15,
+          fontWeight: 600,
+          color: '#222',
+          outline: 'none',
+          background: '#f8fefd',
+          transition: 'border 0.2s',
+        }}
+        autoComplete="off"
+      />
+    </div>
+  );
+}
+
+function InfoRow({ label, value }) {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(63,191,159,0.07)', borderRadius: 8, padding: '12px 18px' }}>
+      <span style={{ color: '#222', fontWeight: 700, fontSize: 15 }}>{label}:</span>
+      <span style={{ color: 'var(--green, #3fbf9f)', fontWeight: 700, fontSize: 15 }}>{value || <span style={{color:'#888'}}>—</span>}</span>
     </div>
   );
 }

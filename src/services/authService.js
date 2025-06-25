@@ -55,6 +55,12 @@ export const logout = () => {
       });
   };
 
+export const getCurrentUser = () =>
+  api.get('/users/me').then(res => res.data.result);
+
 
 export const register = payload =>
-  api.post('/auth/signup', payload).then(res => res.data);  
+  api.post('/auth/signup', payload).then(res => res.data);
+
+export const updateUser = (publicId, data) =>
+  api.put(`/users/${publicId}`, data).then(res => res.data);  
