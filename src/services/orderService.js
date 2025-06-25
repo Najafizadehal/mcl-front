@@ -30,3 +30,25 @@ export async function cancelOrder(orderId) {
     throw err;
   }
 }
+
+/**
+ * ایجاد سفارش جدید
+ * @param {Array<{productId: number, quantity: number}>} items
+ * @returns {Promise<Object>} {success: boolean, data?: Object, message?: string}
+ */
+export async function createOrder(items) {
+  try {
+    const res = await api.post(BASE_PATH, { items });
+    return {
+      success: true,
+      data: res.data,
+      message: 'سفارش با موفقیت ثبت شد'
+    };
+  } catch (err) {
+    console.error('خطا در ایجاد سفارش:', err);
+    return {
+      success: false,
+      message: err.response?.data?.message || 'خطا در ثبت سفارش'
+    };
+  }
+}

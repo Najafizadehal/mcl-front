@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { logout as logoutRequest } from '../services/authService';
 import { Link } from 'react-router-dom';
 import productsIcon from '../assets/icons/products.png';
+import { createOrder } from '../services/orderService';
 
 
 // ⬇️ URL تصویر آنلاین یا CDN
@@ -16,6 +17,7 @@ const Navbar = ({ onSearch, cart, cartItems, onIncrement, onDecrement }) => {
   const cartBtnRef        = useRef(null);
   const [cartModalStyle, setCartModalStyle] = useState({});
   const navigate          = useNavigate();
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   useEffect(() => {
     const onScroll = () => {
@@ -70,6 +72,28 @@ const Navbar = ({ onSearch, cart, cartItems, onIncrement, onDecrement }) => {
     localStorage.removeItem('token');
     navigate('/login', { replace: true });
   };
+
+  async function handleCheckout() {
+    if (cartItems.length === 0 || checkoutLoading) return;
+    setCheckoutLoading(true);
+    try {
+      const items = cartItems.map(item => ({ productId: item.id, quantity: item.quantity }));
+      const response = await createOrder(items);
+      if (response.success) {
+        window.showAlert?.('سفارش با موفقیت ثبت شد!', 'success');
+        setCartOpen(false);
+        // پاک کردن سبد خرید (در App باید هندل شود)
+        window.dispatchEvent(new CustomEvent('clear-cart'));
+      } else {
+        window.showAlert?.(response.message || 'خطا در ثبت سفارش', 'error');
+      }
+    } catch (e) {
+      console.error('خطا در ثبت سفارش:', e);
+      window.showAlert?.('خطا در ثبت سفارش. لطفاً دوباره تلاش کنید.', 'error');
+    } finally {
+      setCheckoutLoading(false);
+    }
+  }
 
   return (
     <header className={`navbar${scrolled ? ' navbar-scrolled' : ''}`}>
@@ -156,7 +180,14 @@ const Navbar = ({ onSearch, cart, cartItems, onIncrement, onDecrement }) => {
                   </div>
                 ))}
               </div>
-              <button className="cart-checkout-btn" style={{ width: '100%', marginTop: 8, background: 'var(--green, #1dbf73)', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 0', fontWeight: 700, fontSize: '1rem', cursor: 'pointer' }}>نهایی کردن خرید</button>
+              <button
+                className="cart-checkout-btn"
+                style={{ width: '100%', marginTop: 8, background: 'var(--green, #1dbf73)', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 0', fontWeight: 700, fontSize: '1rem', cursor: checkoutLoading ? 'not-allowed' : 'pointer', opacity: checkoutLoading ? 0.7 : 1 }}
+                onClick={handleCheckout}
+                disabled={checkoutLoading}
+              >
+                {checkoutLoading ? 'در حال ثبت سفارش...' : 'نهایی کردن خرید'}
+              </button>
             </>
           )}
         </div>
