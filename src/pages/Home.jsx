@@ -9,7 +9,7 @@ import iconParts from '../assets/icons/smallpart.png';
 import iconAcc from '../assets/icons/accesories.png';
 import iconTools from '../assets/icons/repair.png';
 import iconMobile from '../assets/icons/mobile.png';
-import { getAllProducts as fetchProducts } from '../services/productService';
+import { getAllProducts as fetchProducts, getProductById } from '../services/productService';
 
 const categories = [
   { id: 1, label: 'قطعات ریز', icon: iconParts,  type: 'SMALLPARTS',  size: 64 },
@@ -33,6 +33,8 @@ const Home = ({ cart, onAdd, onIncrement, onDecrement }) => {
   const [error, setError] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
   const [searchText, setSearchText] = useState("");
+  const [modalProduct, setModalProduct] = useState(null);
+  const [modalLoading, setModalLoading] = useState(false);
 
   const loadProducts = async (type) => {
     setLoading(true);
@@ -57,6 +59,21 @@ const Home = ({ cart, onAdd, onIncrement, onDecrement }) => {
     setSelectedId(newSelected);
     loadProducts(newSelected ? cat.type : null);
   };
+
+  // نمایش پاپ‌آپ اطلاعات کامل محصول
+  const handleProductClick = async (product) => {
+    setModalLoading(true);
+    try {
+      // اگر اطلاعات کامل نیست، از سرور بگیر
+      const fullProduct = await getProductById(product.id);
+      setModalProduct(fullProduct);
+    } catch (err) {
+      setModalProduct({ ...product, error: 'خطا در دریافت اطلاعات محصول' });
+    } finally {
+      setModalLoading(false);
+    }
+  };
+  const closeModal = () => setModalProduct(null);
 
   // فیلتر محصولات بر اساس جستجو
   const filteredProducts = products.filter(p =>
@@ -94,12 +111,36 @@ const Home = ({ cart, onAdd, onIncrement, onDecrement }) => {
             title: p.name,
             price: Number(p.price).toLocaleString(),
             img: p.imageUrl,
+            description: p.description,
+            productType: p.productType,
           }))}
           onAdd={onAdd}
           cart={cart}
           onIncrement={onIncrement}
           onDecrement={onDecrement}
+          onProductClick={handleProductClick}
         />
+      )}
+      {/* Modal for product details */}
+      {modalProduct && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-content product-modal" onClick={e => e.stopPropagation()}>
+            <button className="close-btn" onClick={closeModal}>&times;</button>
+            {modalLoading ? (
+              <p>در حال بارگذاری اطلاعات محصول...</p>
+            ) : modalProduct.error ? (
+              <p className="error-text">{modalProduct.error}</p>
+            ) : (
+              <>
+                <img src={modalProduct.imageUrl} alt={modalProduct.name} style={{ maxWidth: 200, borderRadius: 12, marginBottom: 16 }} />
+                <h2 style={{ color: '#3fbf9f' }}>{modalProduct.name}</h2>
+                <p style={{ fontWeight: 'bold', fontSize: 18 }}>{Number(modalProduct.price).toLocaleString()} تومان</p>
+                <p style={{ margin: '12px 0', color: '#444' }}>{modalProduct.description || 'بدون توضیحات'}</p>
+                <p style={{ fontSize: 14, color: '#888' }}>دسته‌بندی: {modalProduct.productType}</p>
+              </>
+            )}
+          </div>
+        </div>
       )}
       <Footer />
     </div>

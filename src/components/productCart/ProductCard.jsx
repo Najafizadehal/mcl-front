@@ -2,10 +2,10 @@
 import React from 'react';
 import './ProductCard.css';
 
-const ProductCard = ({ title, price, img, onAdd, quantity, onIncrement, onDecrement }) => (
+const ProductCard = ({ title, price, img, onAdd, quantity, onIncrement, onDecrement, onImageClick }) => (
   <div className="product-card">
-    <div className="product-card__image-wrapper">
-      <img src={img} alt={title} />
+    <div className="product-card__image-wrapper" style={{ cursor: onImageClick ? 'pointer' : undefined }}>
+      <img src={img} alt={title} onClick={onImageClick} />
     </div>
     <h3>{title}</h3>
     <p className="price">{price} تومان</p>

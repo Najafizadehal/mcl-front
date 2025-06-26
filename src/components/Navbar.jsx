@@ -18,6 +18,8 @@ const Navbar = ({ onSearch, cart, cartItems, onIncrement, onDecrement }) => {
   const [cartModalStyle, setCartModalStyle] = useState({});
   const navigate          = useNavigate();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [discountCode, setDiscountCode] = useState("");
+  const [discountApplied, setDiscountApplied] = useState(false);
 
   useEffect(() => {
     const onScroll = () => {
@@ -78,7 +80,7 @@ const Navbar = ({ onSearch, cart, cartItems, onIncrement, onDecrement }) => {
     setCheckoutLoading(true);
     try {
       const items = cartItems.map(item => ({ productId: item.id, quantity: item.quantity }));
-      const response = await createOrder(items);
+      const response = await createOrder({ items, discountCode: discountCode.trim() || undefined });
       if (response.success) {
         window.showAlert?.('سفارش با موفقیت ثبت شد!', 'success');
         setCartOpen(false);
@@ -94,6 +96,13 @@ const Navbar = ({ onSearch, cart, cartItems, onIncrement, onDecrement }) => {
       setCheckoutLoading(false);
     }
   }
+
+  const handleApplyDiscount = () => {
+    if (!discountCode.trim()) return;
+    setDiscountApplied(true);
+    // در آینده: ارسال به سرور و بررسی اعتبار کد
+    alert(`کد تخفیف وارد شده: ${discountCode}`);
+  };
 
   return (
     <header className={`navbar${scrolled ? ' navbar-scrolled' : ''}`}>
@@ -183,6 +192,22 @@ const Navbar = ({ onSearch, cart, cartItems, onIncrement, onDecrement }) => {
                     </div>
                   </div>
                 ))}
+              </div>
+              {/* Discount code box */}
+              <div style={{ margin: '8px 0 0 0', display: 'flex', gap: 8, alignItems: 'center', justifyContent: 'center' }}>
+                <input
+                  type="text"
+                  placeholder="کد تخفیف..."
+                  value={discountCode}
+                  onChange={e => { setDiscountCode(e.target.value); setDiscountApplied(false); }}
+                  style={{ flex: 1, minWidth: 0, border: '1px solid #eee', borderRadius: 6, padding: '6px 10px', fontSize: 14, background: '#f8f8f8' }}
+                  disabled={discountApplied}
+                />
+                <button
+                  onClick={handleApplyDiscount}
+                  style={{ background: '#3fbf9f', color: '#fff', border: 'none', borderRadius: 6, padding: '7px 16px', fontWeight: 600, fontSize: 14, cursor: discountApplied ? 'not-allowed' : 'pointer', opacity: discountApplied ? 0.7 : 1 }}
+                  disabled={discountApplied}
+                >اعمال</button>
               </div>
               <button
                 className="cart-checkout-btn"

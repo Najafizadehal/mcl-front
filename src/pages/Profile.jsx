@@ -35,6 +35,7 @@ import {
   deleteProduct,
   updateProduct,
 } from '../services/productService';
+import { getAllDiscountCodes, createDiscountCode, deleteDiscountCode } from '../services/discountCodeService';
 
 /* ---------------------------------------------------------------------- */
 /*  اصلی                                                                   */
@@ -101,6 +102,8 @@ export default function Profile() {
         return userRole === 'ADMIN' ? <AddProduct onAdded={() => setView('products')} /> : null;
       case 'orders':
         return <Orders />;
+      case 'discounts':
+        return userRole === 'ADMIN' ? <DiscountCodes /> : null;
       case 'myinfo':
         return <MyInfo />;
       default:
@@ -141,6 +144,12 @@ export default function Profile() {
                 icon={productsIcon}
                 label="محصولات"
                 onClick={() => setView('products')}
+              />
+              <SidebarBtn
+                active={view === 'discounts'}
+                icon={addIcon}
+                label="کدهای تخفیف"
+                onClick={() => setView('discounts')}
               />
             </>
           )}
@@ -471,7 +480,9 @@ function Orders() {
       {order.orderDate ? new Date(order.orderDate).toLocaleDateString('fa-IR') : 'نامشخص'}
     </div>
     <div className="col">
-      {order.totalAmount ? order.totalAmount.toLocaleString('fa-IR') + ' تومان' : 'نامشخص'}
+      {(order.totalAmount !== undefined && order.totalAmount !== null)
+        ? order.totalAmount.toLocaleString('fa-IR') + ' تومان'
+        : 'نامشخص'}
     </div>
     <div className="col status-badge" data-status={order.status?.toLowerCase() || 'unknown'}>
       {order.status || 'نامشخص'}
@@ -499,26 +510,39 @@ function Orders() {
       {/* مودال جزئیات سفارش */}
       {selectedOrder && (
         <div className="order-details-modal">
-          <div className="modal-content">
-            <h3>جزئیات سفارش #{selectedOrder.id}</h3>
+          <div className="modal-content order-details-card">
             <button 
               className="close-btn"
               onClick={() => setSelectedOrder(null)}
             >
               &times;
             </button>
-            
-            <div className="order-info">
-              <p><strong>کاربر:</strong> {selectedOrder.user.username}</p>
-              <p><strong>تاریخ:</strong> {new Date(selectedOrder.orderDate).toLocaleString('fa-IR')}</p>
-              <p><strong>وضعیت:</strong> <span className="status-badge" data-status={selectedOrder.status.toLowerCase()}>{selectedOrder.status}</span></p>
-              <p><strong>مبلغ کل:</strong> {selectedOrder.totalAmount.toLocaleString('fa-IR')} تومان</p>
+            <h3 style={{ color: '#3fbf9f', marginBottom: 18, textAlign: 'center' }}>جزئیات سفارش #{selectedOrder.id}</h3>
+            <div className="order-details-sections">
+              <div className="order-details-section order-details-summary">
+                <h4 className="order-details-title">اطلاعات سفارش</h4>
+                <div className="order-details-row"><span>کاربر:</span><span>{selectedOrder.user.username}</span></div>
+                <div className="order-details-row"><span>تاریخ:</span><span>{new Date(selectedOrder.orderDate).toLocaleString('fa-IR')}</span></div>
+                <div className="order-details-row"><span>وضعیت:</span><span className="status-badge" data-status={selectedOrder.status.toLowerCase()}>{selectedOrder.status}</span></div>
+              </div>
+              <div className="order-details-section order-details-pricing">
+                <h4 className="order-details-title">جزئیات پرداخت</h4>
+                <div className="order-details-row"><span>قیمت قبل از تخفیف:</span><span>{selectedOrder.discountAmount !== undefined && selectedOrder.discountAmount !== null
+                  ? (selectedOrder.totalAmount + selectedOrder.discountAmount).toLocaleString('fa-IR') + ' تومان'
+                  : selectedOrder.totalAmount.toLocaleString('fa-IR') + ' تومان'}</span></div>
+                {selectedOrder.discountCode && (
+                  <>
+                    <div className="order-details-row"><span>کد تخفیف:</span><span className="discount-code-badge">{selectedOrder.discountCode.code}</span></div>
+                    <div className="order-details-row"><span>مبلغ تخفیف:</span><span style={{ color: '#f44336', fontWeight: 600 }}>{selectedOrder.discountAmount?.toLocaleString('fa-IR')} تومان</span></div>
+                  </>
+                )}
+                <div className="order-details-row order-details-final-price"><span>قیمت نهایی:</span><span style={{ color: '#1dbf73', fontWeight: 700, fontSize: 18 }}>{selectedOrder.totalAmount.toLocaleString('fa-IR')} تومان</span></div>
+              </div>
             </div>
-
-            <h4>محصولات:</h4>
-            <div className="order-items">
+            <h4 className="order-details-title" style={{ marginTop: 24 }}>محصولات سفارش</h4>
+            <div className="order-items order-details-products">
               {selectedOrder.items.map((item) => (
-                <div key={item.id} className="order-item">
+                <div key={item.id} className="order-item order-details-product-item">
                   <img 
                     src={item.product.imageUrl || '/placeholder-product.png'} 
                     alt={item.product.name}
@@ -526,8 +550,8 @@ function Orders() {
                     height={50}
                   />
                   <div className="item-info">
-                    <p>{item.product.name}</p>
-                    <p>{item.quantity} عدد × {item.priceAtPurchase.toLocaleString('fa-IR')} تومان</p>
+                    <p style={{ fontWeight: 600 }}>{item.product.name}</p>
+                    <p style={{ fontSize: 14, color: '#888' }}>{item.quantity} عدد × {item.priceAtPurchase.toLocaleString('fa-IR')} تومان</p>
                   </div>
                 </div>
               ))}
@@ -835,6 +859,137 @@ function InfoRow({ label, value }) {
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(63,191,159,0.07)', borderRadius: 8, padding: '12px 18px' }}>
       <span style={{ color: '#222', fontWeight: 700, fontSize: 15 }}>{label}:</span>
       <span style={{ color: 'var(--green, #3fbf9f)', fontWeight: 700, fontSize: 15 }}>{value || <span style={{color:'#888'}}>—</span>}</span>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------------- */
+/*  مدیریت کدهای تخفیف                                                    */
+/* ---------------------------------------------------------------------- */
+function DiscountCodes() {
+  const [codes, setCodes] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [form, setForm] = useState({
+    code: '',
+    value: '',
+    type: 'PERCENTAGE',
+    validFrom: '',
+    validTo: '',
+    maxUses: '',
+  });
+  const [creating, setCreating] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
+
+  const loadCodes = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getAllDiscountCodes();
+      setCodes(data);
+    } catch (err) {
+      setError('خطا در دریافت کدهای تخفیف');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadCodes();
+  }, []);
+
+  const handleChange = e => {
+    const { name, value } = e.target;
+    setForm(f => ({ ...f, [name]: value }));
+  };
+
+  const handleCreate = async e => {
+    e.preventDefault();
+    setCreating(true);
+    setSuccessMsg('');
+    try {
+      await createDiscountCode({
+        code: form.code,
+        value: form.value,
+        type: form.type,
+        validFrom: form.validFrom,
+        validTo: form.validTo,
+        maxUses: form.maxUses,
+      });
+      setSuccessMsg('کد تخفیف با موفقیت ایجاد شد!');
+      setForm({ code: '', value: '', type: 'PERCENTAGE', validFrom: '', validTo: '', maxUses: '' });
+      loadCodes();
+    } catch (err) {
+      setError('خطا در ایجاد کد تخفیف');
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const handleDelete = async id => {
+    if (!window.confirm('آیا از حذف این کد مطمئن هستید؟')) return;
+    try {
+      await deleteDiscountCode(id);
+      loadCodes();
+    } catch {
+      setError('خطا در حذف کد تخفیف');
+    }
+  };
+
+  return (
+    <div className="discount-codes-page" style={{ maxWidth: 900, margin: '0 auto', padding: 24 }}>
+      <h2 style={{ color: '#3fbf9f', marginBottom: 16 }}>مدیریت کدهای تخفیف</h2>
+      <form onSubmit={handleCreate} className="discount-form" style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 8px #3fbf9f22', padding: 20, marginBottom: 32 }}>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          <input name="code" value={form.code} onChange={handleChange} placeholder="کد تخفیف" required className="admin-green-input" />
+          <input name="value" value={form.value} onChange={handleChange} placeholder="مقدار" required type="number" min="1" className="admin-green-input" />
+          <select name="type" value={form.type} onChange={handleChange} className="admin-green-input">
+            <option value="PERCENTAGE">درصدی</option>
+            <option value="FIXED_AMOUNT">مبلغ ثابت</option>
+          </select>
+        </div>
+        <div style={{ display: 'flex', gap: 12, marginTop: 12, flexWrap: 'wrap' }}>
+          <input name="validFrom" value={form.validFrom} onChange={handleChange} placeholder="تاریخ شروع (YYYY-MM-DDTHH:MM)" required type="datetime-local" className="admin-green-input" />
+          <input name="validTo" value={form.validTo} onChange={handleChange} placeholder="تاریخ پایان (YYYY-MM-DDTHH:MM)" required type="datetime-local" className="admin-green-input" />
+          <input name="maxUses" value={form.maxUses} onChange={handleChange} placeholder="حداکثر دفعات استفاده" required type="number" min="1" className="admin-green-input" />
+        </div>
+        <button type="submit" disabled={creating} style={{ marginTop: 16, background: '#3fbf9f', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 0', fontWeight: 700, fontSize: '1rem', width: 180, cursor: creating ? 'not-allowed' : 'pointer', opacity: creating ? 0.7 : 1 }}>ایجاد کد تخفیف</button>
+        {successMsg && <div style={{ color: '#1dbf73', marginTop: 8 }}>{successMsg}</div>}
+        {error && <div style={{ color: '#f44336', marginTop: 8 }}>{error}</div>}
+      </form>
+      <h3 style={{ color: '#3fbf9f', marginBottom: 8 }}>لیست کدهای تخفیف</h3>
+      {loading ? <p>در حال بارگذاری...</p> : error ? <p style={{ color: '#f44336' }}>{error}</p> : (
+        <div className="discount-table" style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 8px #3fbf9f22', padding: 0, marginBottom: 24 }}>
+          <div className="orders-table discount-table-flex">
+            <div className="orders-header discount-header">
+              <div className="col">کد</div>
+              <div className="col">مقدار</div>
+              <div className="col">نوع</div>
+              <div className="col">تاریخ شروع</div>
+              <div className="col">تاریخ پایان</div>
+              <div className="col">حداکثر</div>
+              <div className="col">استفاده شده</div>
+              <div className="col">وضعیت</div>
+              <div className="col"></div>
+            </div>
+            {codes.map(code => (
+              <div className="orders-row discount-row" key={code.id}>
+                <div className="col">{code.code}</div>
+                <div className="col">{code.discountValue}</div>
+                <div className="col">{code.discountType === 'PERCENTAGE' ? 'درصدی' : 'مبلغ ثابت'}</div>
+                <div className="col">{code.validFrom?.replace('T', ' ').slice(0, 16)}</div>
+                <div className="col">{code.validTo?.replace('T', ' ').slice(0, 16)}</div>
+                <div className="col">{code.maxUses}</div>
+                <div className="col">{code.usedCount}</div>
+                <div className="col">{code.active ? 'فعال' : 'غیرفعال'}</div>
+                <div className="col">
+                  <button onClick={() => handleDelete(code.id)} style={{ background: '#f44336', color: '#fff', border: 'none', borderRadius: 6, padding: '4px 10px', fontSize: 13, cursor: 'pointer' }}>حذف</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

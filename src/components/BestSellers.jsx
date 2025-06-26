@@ -1,7 +1,7 @@
 import React from 'react';
 import ProductCard from './productCart/ProductCard';
 
-const BestSellers = ({ items, onAdd, cart, onIncrement, onDecrement }) => (
+const BestSellers = ({ items, onAdd, cart, onIncrement, onDecrement, onProductClick }) => (
   <section className="best-sellers">
     {/* <h2>محصولات</h2> */}
     <div className="product-strip">
@@ -15,6 +15,7 @@ const BestSellers = ({ items, onAdd, cart, onIncrement, onDecrement }) => (
           quantity={cart[p.id]?.quantity || 0}
           onIncrement={() => onIncrement(p)}
           onDecrement={() => onDecrement(p)}
+          onImageClick={() => onProductClick && onProductClick(p)}
         />
       ))}
     </div>

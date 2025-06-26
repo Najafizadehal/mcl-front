@@ -310,3 +310,56 @@ body { padding-bottom: 40px; }
 .home2 > div[style*='justify-content: center'] {
   margin-top: 8px !important;
 }
+
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(60, 191, 159, 0.15); /* site accent color, semi-transparent */
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-modal.modal-content {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(60,191,159,0.18);
+  padding: 28px 18px 20px 18px;
+  min-width: 260px;
+  max-width: 380px;
+  width: 95vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  text-align: center;
+  animation: modalIn 0.2s cubic-bezier(.4,2,.6,1) both;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(40px) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (max-width: 480px) {
+  .product-modal.modal-content {
+    max-width: 98vw;
+    min-width: 0;
+    padding: 16px 4vw 16px 4vw;
+  }
+}
+
+.close-btn {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #3fbf9f;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.close-btn:hover {
+  color: #1e7e6b;
+}

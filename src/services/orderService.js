@@ -33,12 +33,12 @@ export async function cancelOrder(orderId) {
 
 /**
  * ایجاد سفارش جدید
- * @param {Array<{productId: number, quantity: number}>} items
+ * @param {{items: Array<{productId: number, quantity: number}>, discountCode?: string}} orderData
  * @returns {Promise<Object>} {success: boolean, data?: Object, message?: string}
  */
-export async function createOrder(items) {
+export async function createOrder({ items, discountCode }) {
   try {
-    const res = await api.post(BASE_PATH, { items });
+    const res = await api.post(BASE_PATH, { items, discountCode });
     return {
       success: true,
       data: res.data,
