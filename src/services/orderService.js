@@ -52,3 +52,17 @@ export async function createOrder(items) {
     };
   }
 }
+
+/**
+ * دریافت تمام سفارشات (ویژه ادمین)
+ * @returns {Promise<Array>}
+ */
+export async function getAllOrdersForAdmin() {
+  try {
+    const res = await api.get(`${BASE_PATH}/all`);
+    return res.data;
+  } catch (err) {
+    console.error('خطا در دریافت همه سفارشات (ادمین):', err);
+    throw err;
+  }
+}

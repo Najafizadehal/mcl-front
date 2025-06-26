@@ -24,7 +24,7 @@ import ordersIcon from '../assets/icons/orders.png';
 import addIcon from '../assets/icons/add.png';
 import uploadIcon from '../assets/icons/add.png';
 import homeIcon from '../assets/logo.png';
-// import profileIcon from '../assets/icons/profile.svg';
+import profileIcon from '../assets/icons/profileIcon.png';
 
 import '../styles/Profile.css';
 
@@ -122,6 +122,12 @@ export default function Profile() {
         </div>
 
         <nav className="sidebar-nav">
+        <SidebarBtn
+            active={view === 'myinfo'}
+            icon={profileIcon}
+            label="مشخصات من"
+            onClick={() => setView('myinfo')}
+          />
           {userRole === 'ADMIN' && (
             <>
               <SidebarBtn
@@ -138,12 +144,7 @@ export default function Profile() {
               />
             </>
           )}
-          <SidebarBtn
-            active={view === 'myinfo'}
-            icon={homeIcon}
-            label="مشخصات من"
-            onClick={() => setView('myinfo')}
-          />
+          
           <SidebarBtn
             active={view === 'orders'}
             icon={ordersIcon}
