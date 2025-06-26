@@ -7,7 +7,7 @@ export async function getAllDiscountCodes() {
   return res.data;
 }
 
-export async function createDiscountCode({ code, value, type, validFrom, validTo, maxUses }) {
+export async function createDiscountCode({ code, value, type, validFrom, validTo, maxUses, minimumOrderAmount }) {
   const params = {
     code,
     value,
@@ -15,6 +15,7 @@ export async function createDiscountCode({ code, value, type, validFrom, validTo
     validFrom,
     validTo,
     maxUses,
+    minimumOrderAmount,
   };
   const res = await api.post(BASE_PATH, null, { params });
   return res.data;

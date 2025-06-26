@@ -877,6 +877,7 @@ function DiscountCodes() {
     validFrom: '',
     validTo: '',
     maxUses: '',
+    minimumOrderAmount: '',
   });
   const [creating, setCreating] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
@@ -910,14 +911,15 @@ function DiscountCodes() {
     try {
       await createDiscountCode({
         code: form.code,
-        value: form.value,
+        value: Number(form.value),
         type: form.type,
         validFrom: form.validFrom,
         validTo: form.validTo,
         maxUses: form.maxUses,
+        minimumOrderAmount: Number(form.minimumOrderAmount) || 0,
       });
       setSuccessMsg('کد تخفیف با موفقیت ایجاد شد!');
-      setForm({ code: '', value: '', type: 'PERCENTAGE', validFrom: '', validTo: '', maxUses: '' });
+      setForm({ code: '', value: '', type: 'PERCENTAGE', validFrom: '', validTo: '', maxUses: '', minimumOrderAmount: '' });
       loadCodes();
     } catch (err) {
       setError('خطا در ایجاد کد تخفیف');
@@ -936,22 +938,76 @@ function DiscountCodes() {
     }
   };
 
+  // Format value input for fixed amount
+  function formatDiscountValueInput(value, type) {
+    if (type === 'FIXED_AMOUNT' && value) {
+      // Remove non-digits, format as number
+      const num = Number(String(value).replace(/\D/g, ''));
+      return num ? num.toLocaleString('fa-IR') : '';
+    }
+    return value;
+  }
+
+  // Format minimum order amount input for fixed amount
+  function formatMinOrderAmountInput(value, type) {
+    if (type === 'FIXED_AMOUNT' && value) {
+      const num = Number(String(value).replace(/\D/g, ''));
+      return num ? num.toLocaleString('fa-IR') : '';
+    }
+    return value;
+  }
+
   return (
     <div className="discount-codes-page" style={{ maxWidth: 900, margin: '0 auto', padding: 24 }}>
       <h2 style={{ color: '#3fbf9f', marginBottom: 16 }}>مدیریت کدهای تخفیف</h2>
       <form onSubmit={handleCreate} className="discount-form" style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 8px #3fbf9f22', padding: 20, marginBottom: 32 }}>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          <input name="code" value={form.code} onChange={handleChange} placeholder="کد تخفیف" required className="admin-green-input" />
-          <input name="value" value={form.value} onChange={handleChange} placeholder="مقدار" required type="number" min="1" className="admin-green-input" />
-          <select name="type" value={form.type} onChange={handleChange} className="admin-green-input">
+          <input name="code" value={form.code} onChange={handleChange} placeholder="کد تخفیف" required className="admin-green-input" style={{ flex: 1, minWidth: 120 }} />
+          <input
+            name="value"
+            value={formatDiscountValueInput(form.value, form.type)}
+            onChange={e => {
+              let val = e.target.value;
+              if (form.type === 'FIXED_AMOUNT') {
+                val = val.replace(/\D/g, '');
+              }
+              setForm(f => ({ ...f, value: val }));
+            }}
+            placeholder="مقدار"
+            required
+            type="text"
+            inputMode={form.type === 'FIXED_AMOUNT' ? 'numeric' : 'decimal'}
+            min="1"
+            className="admin-green-input"
+            style={{ flex: 1, minWidth: 90 }}
+          />
+          <select name="type" value={form.type} onChange={handleChange} className="admin-green-input" style={{ flex: 1, minWidth: 120 }}>
             <option value="PERCENTAGE">درصدی</option>
             <option value="FIXED_AMOUNT">مبلغ ثابت</option>
           </select>
+          <input
+            name="minimumOrderAmount"
+            value={formatMinOrderAmountInput(form.minimumOrderAmount, form.type)}
+            onChange={e => {
+              let val = e.target.value;
+              if (form.type === 'FIXED_AMOUNT') {
+                val = val.replace(/\D/g, '');
+              }
+              setForm(f => ({ ...f, minimumOrderAmount: val }));
+            }}
+            placeholder="حداقل مبلغ سفارش"
+            required
+            type="text"
+            inputMode={form.type === 'FIXED_AMOUNT' ? 'numeric' : 'decimal'}
+            min="0"
+            className="admin-green-input"
+            style={{ flex: 1, minWidth: 120 }}
+          />
         </div>
         <div style={{ display: 'flex', gap: 12, marginTop: 12, flexWrap: 'wrap' }}>
-          <input name="validFrom" value={form.validFrom} onChange={handleChange} placeholder="تاریخ شروع (YYYY-MM-DDTHH:MM)" required type="datetime-local" className="admin-green-input" />
-          <input name="validTo" value={form.validTo} onChange={handleChange} placeholder="تاریخ پایان (YYYY-MM-DDTHH:MM)" required type="datetime-local" className="admin-green-input" />
-          <input name="maxUses" value={form.maxUses} onChange={handleChange} placeholder="حداکثر دفعات استفاده" required type="number" min="1" className="admin-green-input" />
+          <input name="validFrom" value={form.validFrom} onChange={handleChange} placeholder="تاریخ شروع (YYYY-MM-DDTHH:MM)" required type="datetime-local" className="admin-green-input" style={{ flex: 1, minWidth: 180 }} />
+          <input name="validTo" value={form.validTo} onChange={handleChange} placeholder="تاریخ پایان (YYYY-MM-DDTHH:MM)" required type="datetime-local" className="admin-green-input" style={{ flex: 1, minWidth: 180 }} />
+          <input name="maxUses" value={form.maxUses} onChange={handleChange} placeholder="حداکثر دفعات استفاده" required type="number" min="1" className="admin-green-input" style={{ flex: 1, minWidth: 120 }} />
         </div>
         <button type="submit" disabled={creating} style={{ marginTop: 16, background: '#3fbf9f', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 0', fontWeight: 700, fontSize: '1rem', width: 180, cursor: creating ? 'not-allowed' : 'pointer', opacity: creating ? 0.7 : 1 }}>ایجاد کد تخفیف</button>
         {successMsg && <div style={{ color: '#1dbf73', marginTop: 8 }}>{successMsg}</div>}
