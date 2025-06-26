@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import WaveHeader from '../components/WaveHeader';
 import ProductCard from '../components/productCart/ProductCard.jsx';
-import { getAllOrders, cancelOrder } from '../services/orderService';
+import { getAllOrders, getAllOrdersForAdmin, cancelOrder } from '../services/orderService';
 
 import {
   ResponsiveContainer,
@@ -395,25 +395,29 @@ function Products({ products, loading, error, onRefresh }) {
 /* ---------------------------------------------------------------------- */
 /*  سفارشات نمونه                                                         */
 /* ---------------------------------------------------------------------- */
-
-
-
-
 function Orders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
-    loadOrders();
+    const role = localStorage.getItem('userRole');
+    setUserRole(role);
+    loadOrders(role);
   }, []);
 
-  const loadOrders = async () => {
+  const loadOrders = async (role = userRole) => {
     setLoading(true);
     setError(null);
     try {
-      const ordersList = await getAllOrders();
+      let ordersList;
+      if (role === 'ADMIN') {
+        ordersList = await getAllOrdersForAdmin();
+      } else {
+        ordersList = await getAllOrders();
+      }
       setOrders(ordersList);
     } catch (err) {
       console.error('خطا در دریافت سفارشات:', err);
