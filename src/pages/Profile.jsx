@@ -39,6 +39,7 @@ import {
   updateProduct,
 } from '../services/productService';
 import { getAllDiscountCodes, createDiscountCode, deleteDiscountCode } from '../services/discountCodeService';
+import Alert from '../components/common/Alert';
 
 /* ---------------------------------------------------------------------- */
 /*  اصلی                                                                   */
@@ -50,6 +51,7 @@ export default function Profile() {
   const [productsLoading, setProductsLoading] = useState(false);
   const [productsError, setProductsError] = useState(null);
   const [userRole, setUserRole] = useState(null);
+  const [alertConfig, setAlertConfig] = useState({ show: false, message: '', type: 'info', confirm: false, onConfirm: null });
 
   useEffect(() => {
     const role = localStorage.getItem('userRole');
@@ -88,6 +90,14 @@ export default function Profile() {
     }
   };
 
+  const showAlert = (message, type = 'success', duration = 4000) => {
+    setAlertConfig({ show: true, message, type, duration, confirm: false, onConfirm: null });
+  };
+  const showConfirm = (message, onConfirm) => {
+    setAlertConfig({ show: true, message, type: 'warning', confirm: true, onConfirm });
+  };
+  const closeAlert = () => setAlertConfig(a => ({ ...a, show: false }));
+
   const renderContent = () => {
     switch (view) {
       case 'stats':
@@ -99,16 +109,19 @@ export default function Profile() {
             loading={productsLoading}
             error={productsError}
             onRefresh={loadProducts}
+            showAlert={showAlert}
+            showConfirm={showConfirm}
+            closeAlert={closeAlert}
           />
         ) : null;
       case 'add':
-        return userRole === 'ADMIN' ? <AddProduct onAdded={() => setView('products')} /> : null;
+        return userRole === 'ADMIN' ? <AddProduct onAdded={() => setView('products')} showAlert={showAlert} showConfirm={showConfirm} closeAlert={closeAlert} /> : null;
       case 'orders':
-        return <Orders />;
+        return <Orders showAlert={showAlert} showConfirm={showConfirm} closeAlert={closeAlert} />;
       case 'discounts':
-        return userRole === 'ADMIN' ? <DiscountCodes /> : null;
+        return userRole === 'ADMIN' ? <DiscountCodes showAlert={showAlert} showConfirm={showConfirm} closeAlert={closeAlert} /> : null;
       case 'myinfo':
-        return <MyInfo />;
+        return <MyInfo showAlert={showAlert} showConfirm={showConfirm} closeAlert={closeAlert} />;
       default:
         return null;
     }
@@ -116,6 +129,17 @@ export default function Profile() {
 
   return (
     <div className="admin-dashboard">
+      {alertConfig.show && (
+        <Alert
+          message={alertConfig.message}
+          type={alertConfig.type}
+          duration={alertConfig.duration}
+          confirm={alertConfig.confirm}
+          onConfirm={alertConfig.onConfirm}
+          onCancel={closeAlert}
+          onClose={closeAlert}
+        />
+      )}
       <main className="admin-main">{renderContent()}</main>
 
       {/* سایدبار */}
@@ -229,7 +253,7 @@ function Statistics() {
 /* ---------------------------------------------------------------------- */
 /*  لیست محصولات + حذف/اصلاح/غیرفعال                                      */
 /* ---------------------------------------------------------------------- */
-function Products({ products, loading, error, onRefresh }) {
+function Products({ products, loading, error, onRefresh, showAlert, showConfirm, closeAlert }) {
   const [showEdit, setShowEdit] = useState(false);
   const [editing, setEditing] = useState(null);
   const [editName, setEditName] = useState('');
@@ -241,15 +265,15 @@ function Products({ products, loading, error, onRefresh }) {
 
   /* حذف --------------------------------------------------------------- */
   const handleDelete = async (id) => {
-    if (!window.confirm('آیا از حذف این محصول مطمئن هستید؟')) return;
-    try {
-      await deleteProduct(id);
-      alert('محصول حذف شد');
-      onRefresh();
-    } catch (err) {
-      console.error('خطا در حذف محصول:', err);
-      alert('خطا در حذف محصول');
-    }
+    showConfirm('آیا از حذف این محصول مطمئن هستید؟', async () => {
+      try {
+        await deleteProduct(id);
+        showAlert('محصول حذف شد', 'success');
+        onRefresh();
+      } catch (err) {
+        showAlert('خطا در حذف محصول', 'error');
+      }
+    });
   };
 
   /* نمایش مودال ویرایش ------------------------------------------------ */
@@ -407,7 +431,7 @@ function Products({ products, loading, error, onRefresh }) {
 /* ---------------------------------------------------------------------- */
 /*  سفارشات نمونه                                                         */
 /* ---------------------------------------------------------------------- */
-function Orders() {
+function Orders({ showAlert, showConfirm, closeAlert }) {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -440,16 +464,15 @@ function Orders() {
   };
 
   const handleCancelOrder = async (orderId) => {
-    if (!window.confirm('آیا از کنسلی این سفارش مطمئن هستید؟')) return;
-    
-    try {
-      await cancelOrder(orderId);
-      alert('سفارش با موفقیت کنسل شد');
-      loadOrders(); // بارگذاری مجدد لیست
-    } catch (err) {
-      console.error('خطا در کنسلی سفارش:', err);
-      alert('خطا در کنسلی سفارش');
-    }
+    showConfirm('آیا از کنسلی این سفارش مطمئن هستید؟', async () => {
+      try {
+        await cancelOrder(orderId);
+        showAlert('سفارش با موفقیت کنسل شد', 'success');
+        loadOrders();
+      } catch (err) {
+        showAlert('خطا در کنسلی سفارش', 'error');
+      }
+    });
   };
 
   const showOrderDetails = (order) => {
@@ -569,7 +592,7 @@ function Orders() {
 /* ---------------------------------------------------------------------- */
 /*  افزودن محصول                                                          */
 /* ---------------------------------------------------------------------- */
-function AddProduct({ onAdded }) {
+function AddProduct({ onAdded, showAlert, showConfirm, closeAlert }) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
@@ -585,15 +608,13 @@ function AddProduct({ onAdded }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name.trim() || !price) {
-      alert('نام و قیمت محصول الزامی است.');
+      showAlert('نام و قیمت محصول الزامی است.', 'error');
       return;
     }
-
     setLoading(true);
     try {
       let imageUrl = '';
       if (file) imageUrl = await uploadProductImage(file);
-
       const payload = {
         name: name.trim(),
         description: description.trim(),
@@ -601,11 +622,8 @@ function AddProduct({ onAdded }) {
         productType: type,
         imageUrl,
       };
-
       await createProduct(payload);
-      alert('محصول با موفقیت اضافه شد!');
-
-      // reset form
+      showAlert('محصول با موفقیت اضافه شد!', 'success');
       setName('');
       setDescription('');
       setPrice('');
@@ -613,8 +631,7 @@ function AddProduct({ onAdded }) {
       setFile(null);
       onAdded?.();
     } catch (err) {
-      console.error('خطا در ایجاد محصول:', err);
-      alert('خطا در ایجاد محصول');
+      showAlert('خطا در ایجاد محصول', 'error');
     } finally {
       setLoading(false);
     }
@@ -677,7 +694,7 @@ function AddProduct({ onAdded }) {
   );
 }
 
-function MyInfo() {
+function MyInfo({ showAlert, showConfirm, closeAlert }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -869,7 +886,7 @@ function InfoRow({ label, value }) {
 /* ---------------------------------------------------------------------- */
 /*  مدیریت کدهای تخفیف                                                    */
 /* ---------------------------------------------------------------------- */
-function DiscountCodes() {
+function DiscountCodes({ showAlert, showConfirm, closeAlert }) {
   const [codes, setCodes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -932,13 +949,15 @@ function DiscountCodes() {
   };
 
   const handleDelete = async id => {
-    if (!window.confirm('آیا از حذف این کد مطمئن هستید؟')) return;
-    try {
-      await deleteDiscountCode(id);
-      loadCodes();
-    } catch {
-      setError('خطا در حذف کد تخفیف');
-    }
+    showConfirm('آیا از حذف این کد مطمئن هستید؟', async () => {
+      try {
+        await deleteDiscountCode(id);
+        showAlert('کد تخفیف حذف شد', 'success');
+        loadCodes();
+      } catch {
+        showAlert('خطا در حذف کد تخفیف', 'error');
+      }
+    });
   };
 
   // Format value input for fixed amount

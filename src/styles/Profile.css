@@ -767,3 +767,30 @@
     padding: 12px 2vw 12px 2vw;
   }
 }
+
+/* دکمه‌های تایید و انصراف در Alert */
+.alert-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+.alert-btn {
+  padding: 6px 18px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 15px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.alert-btn.confirm {
+  background: var(--green, #3fbf9f);
+  color: #fff;
+}
+.alert-btn.cancel {
+  background: #eee;
+  color: #333;
+}
+.alert-btn:active {
+  opacity: 0.8;
+}
