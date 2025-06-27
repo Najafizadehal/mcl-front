@@ -21,10 +21,13 @@ import menuIcon from '../assets/icons/menu.png';
 import statsIcon from '../assets/icons/stats.png';
 import productsIcon from '../assets/icons/products.png';
 import ordersIcon from '../assets/icons/orders.png';
-import addIcon from '../assets/icons/add.png';
+// import addIcon from '../assets/icons/add.png';
 import uploadIcon from '../assets/icons/add.png';
 import homeIcon from '../assets/logo.png';
 import profileIcon from '../assets/icons/profileIcon.png';
+import discIcon from '../assets/icons/disc.png';
+import addIcon from '../assets/icons/add2.png';
+
 
 import '../styles/Profile.css';
 
@@ -147,7 +150,7 @@ export default function Profile() {
               />
               <SidebarBtn
                 active={view === 'discounts'}
-                icon={addIcon}
+                icon={discIcon}
                 label="کدهای تخفیف"
                 onClick={() => setView('discounts')}
               />
