@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/mcl-front/static/css/main.b69e8390.css",
+    "main.js": "/mcl-front/static/js/main.1be8e76c.js",
+    "static/js/453.c2b2afdb.chunk.js": "/mcl-front/static/js/453.c2b2afdb.chunk.js",
+    "static/media/hero.png": "/mcl-front/static/media/hero.2006b2bdafe9866b0277.png",
+    "static/media/logo.png": "/mcl-front/static/media/logo.4726658c919b1d0b3cc0.png",
+    "static/media/smallpart.png": "/mcl-front/static/media/smallpart.6aad2f51276a38a19996.png",
+    "static/media/accesories.png": "/mcl-front/static/media/accesories.699904660f73785cb87f.png",
+    "static/media/repair.png": "/mcl-front/static/media/repair.cb2664b01d75dfde6020.png",
+    "static/media/wave.png": "/mcl-front/static/media/wave.4c4bc29b8ab207636ff6.png",
+    "static/media/disc.png": "/mcl-front/static/media/disc.fd7a7692c58d637056ea.png",
+    "static/media/add2.png": "/mcl-front/static/media/add2.fa048330094e9f2e19e2.png",
+    "static/media/profileIcon.png": "/mcl-front/static/media/profileIcon.94d19722cca063fbbe7d.png",
+    "static/media/mobile.png": "/mcl-front/static/media/mobile.735d7150b29536c91624.png",
+    "index.html": "/mcl-front/index.html",
+    "main.b69e8390.css.map": "/mcl-front/static/css/main.b69e8390.css.map",
+    "main.1be8e76c.js.map": "/mcl-front/static/js/main.1be8e76c.js.map",
+    "453.c2b2afdb.chunk.js.map": "/mcl-front/static/js/453.c2b2afdb.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.b69e8390.css",
+    "static/js/main.1be8e76c.js"
+  ]
+}
