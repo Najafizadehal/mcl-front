@@ -37,6 +37,7 @@ import {
   createProduct,
   deleteProduct,
   updateProduct,
+  setActiveStatus,
 } from '../services/productService';
 import { getAllDiscountCodes, createDiscountCode, deleteDiscountCode } from '../services/discountCodeService';
 import Alert from '../components/common/Alert';
@@ -291,7 +292,6 @@ function Products({ products, loading, error, onRefresh, showAlert, showConfirm,
   const saveEdit = async () => {
     try {
       setEditLoading(true);
-      
       // اگر فایل جدید انتخاب شده، آن را آپلود کنید
       let newImageUrl = editImageUrl;
       if (editFile) {
@@ -299,11 +299,10 @@ function Products({ products, loading, error, onRefresh, showAlert, showConfirm,
           newImageUrl = await uploadProductImage(editFile);
         } catch (err) {
           console.error('خطا در آپلود تصویر:', err);
-          alert('خطا در آپلود تصویر');
+          showAlert('خطا در آپلود تصویر', 'error');
           return;
         }
       }
-
       await updateProduct(editing.id, {
         name: editName.trim(),
         description: editDesc.trim(),
@@ -311,16 +310,28 @@ function Products({ products, loading, error, onRefresh, showAlert, showConfirm,
         productType: editing.productType,
         imageUrl: newImageUrl,
       });
-      
-      alert('محصول با موفقیت بروزرسانی شد');
+      showAlert('محصول با موفقیت بروزرسانی شد', 'success');
       setShowEdit(false);
       onRefresh();
     } catch (err) {
       console.error('خطا در بروزرسانی محصول:', err);
-      alert('خطا در بروزرسانی محصول');
+      showAlert('خطا در بروزرسانی محصول', 'error');
     } finally {
       setEditLoading(false);
     }
+  };
+
+  const handleToggleActive = async (product) => {
+    const action = product.active ? 'غیرفعال' : 'فعال';
+    showConfirm(`آیا از ${action} کردن این محصول مطمئن هستید؟`, async () => {
+      try {
+        await setActiveStatus(product.id, !product.active);
+        showAlert(`محصول با موفقیت ${action} شد`, 'success');
+        onRefresh();
+      } catch (err) {
+        showAlert(`خطا در ${action} کردن محصول`, 'error');
+      }
+    });
   };
 
   if (loading) return <p>در حال بارگذاری محصولات…</p>;
@@ -347,6 +358,7 @@ function Products({ products, loading, error, onRefresh, showAlert, showConfirm,
                 price={p.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                 img={p.imageUrl || ''}
                 onAdd={() => console.log('افزودن به سبد:', p.name)}
+                active={p.active !== false}
               />
 
               <div className="product-actions">
@@ -356,8 +368,8 @@ function Products({ products, loading, error, onRefresh, showAlert, showConfirm,
                 <button className="action-btn edit-btn" onClick={() => openEdit(p)}>
                   اصلاح
                 </button>
-                <button className="action-btn disable-btn" onClick={() => {/* TODO */}}>
-                  غیرفعال
+                <button className="action-btn disable-btn" onClick={() => handleToggleActive(p)}>
+                  {p.active === false ? 'فعال' : 'غیرفعال'}
                 </button>
               </div>
             </div>

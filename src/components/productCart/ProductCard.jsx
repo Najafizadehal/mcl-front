@@ -2,10 +2,13 @@
 import React from 'react';
 import './ProductCard.css';
 
-const ProductCard = ({ title, price, img, onAdd, quantity, onIncrement, onDecrement, onImageClick }) => (
+const ProductCard = ({ title, price, img, onAdd, quantity, onIncrement, onDecrement, onImageClick, active = true }) => (
   <div className="product-card">
-    <div className="product-card__image-wrapper" style={{ cursor: onImageClick ? 'pointer' : undefined }}>
-      <img src={img} alt={title} onClick={onImageClick} />
+    <div className="product-card__image-wrapper" style={{ cursor: onImageClick ? 'pointer' : undefined, position: 'relative' }}>
+      <img src={img} alt={title} onClick={onImageClick} style={{ opacity: active ? 1 : 0.4, filter: active ? 'none' : 'grayscale(60%)' }} />
+      {!active && (
+        <div className="product-card__inactive-overlay">غیرفعال</div>
+      )}
     </div>
     <h3>{title}</h3>
     <p className="price">{price} تومان</p>

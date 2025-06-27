@@ -103,3 +103,29 @@ export async function deleteProduct(id) {
     throw err;
   }
 }
+
+/**
+ * فعال یا غیرفعال کردن محصول
+ * @param {number} id - شناسه محصول
+ * @param {boolean} active - وضعیت فعال بودن
+ * @returns {Promise<Object>} - محصول بروزرسانی‌شده
+ */
+export async function setActiveStatus(id, active) {
+  try {
+    const res = await api.patch(`${BASE_PATH}/${id}/active`, null, { params: { active } });
+    return res.data;
+  } catch (err) {
+    console.error('خطا در تغییر وضعیت فعال بودن محصول:', err);
+    throw err;
+  }
+}
+
+// export {
+//   uploadProductImage,
+//   createProduct,
+//   getAllProducts,
+//   getProductById,
+//   updateProduct,
+//   deleteProduct,
+//   setActiveStatus
+// };
