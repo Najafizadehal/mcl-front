@@ -56,14 +56,14 @@ const ProductCard = ({
         
         <h3 className="product-card__title">{title}</h3>
         
-        {/* نمایش امتیاز */}
         {averageRating !== undefined && averageRating > 0 && (
           <div className="product-card__rating">
             <div className="stars">
               {renderStars(averageRating)}
             </div>
             <span className="rating-text">
-              {averageRating.toFixed(1)} ({reviewCount || 0})
+              {averageRating.toFixed(1)}
+              {reviewCount > 0 && ` (${reviewCount})`}
             </span>
           </div>
         )}
