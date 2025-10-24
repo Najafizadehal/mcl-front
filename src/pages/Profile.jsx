@@ -1,6 +1,6 @@
 // src/pages/AdminDashboard.jsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import WaveHeader from '../components/WaveHeader';
 import ProductCard from '../components/productCart/ProductCard.jsx';
@@ -17,7 +17,6 @@ import {
   Legend,
 } from 'recharts';
 import { getCurrentUser, updateUser } from '../services/authService';
-import menuIcon from '../assets/icons/menu.png';
 import statsIcon from '../assets/icons/stats.png';
 import productsIcon from '../assets/icons/products.png';
 import ordersIcon from '../assets/icons/orders.png';
@@ -69,6 +68,7 @@ export default function Profile() {
     if (view === 'products') loadProducts();
   }, [view]);
 
+  // eslint-disable-next-line no-unused-vars
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
@@ -263,6 +263,11 @@ function Products({ products, loading, error, onRefresh, showAlert, showConfirm,
   const [editFile, setEditFile] = useState(null);
   const [editImageUrl, setEditImageUrl] = useState('');
   const [editLoading, setEditLoading] = useState(false);
+  // فیلدهای جدید برای ویرایش
+  const [editStockQuantity, setEditStockQuantity] = useState('');
+  const [editBrand, setEditBrand] = useState('');
+  const [editAverageRating, setEditAverageRating] = useState('');
+  const [editReviewCount, setEditReviewCount] = useState('');
 
   /* حذف --------------------------------------------------------------- */
   const handleDelete = async (id) => {
@@ -285,6 +290,10 @@ function Products({ products, loading, error, onRefresh, showAlert, showConfirm,
     setEditPrice(prod.price);
     setEditImageUrl(prod.imageUrl || '');
     setEditFile(null);
+    setEditStockQuantity(prod.stockQuantity || 0);
+    setEditBrand(prod.brand || '');
+    setEditAverageRating(prod.averageRating || 0);
+    setEditReviewCount(prod.reviewCount || 0);
     setShowEdit(true);
   };
 
@@ -309,6 +318,10 @@ function Products({ products, loading, error, onRefresh, showAlert, showConfirm,
         price: parseFloat(editPrice),
         productType: editing.productType,
         imageUrl: newImageUrl,
+        stockQuantity: parseInt(editStockQuantity) || 0,
+        brand: editBrand.trim() || null,
+        averageRating: parseFloat(editAverageRating) || 0,
+        reviewCount: parseInt(editReviewCount) || 0,
       });
       showAlert('محصول با موفقیت بروزرسانی شد', 'success');
       setShowEdit(false);
@@ -397,12 +410,19 @@ function Products({ products, loading, error, onRefresh, showAlert, showConfirm,
       </div>
       {/* )} */}
 
-      {/* فیلدهای دیگر بدون تغییر */}
+      {/* فیلدهای دیگر */}
       <input
         type="text"
         value={editName}
         onChange={(e) => setEditName(e.target.value)}
         placeholder="نام محصول"
+        disabled={editLoading}
+      />
+      <input
+        type="text"
+        value={editBrand}
+        onChange={(e) => setEditBrand(e.target.value)}
+        placeholder="برند"
         disabled={editLoading}
       />
       <input
@@ -412,12 +432,42 @@ function Products({ products, loading, error, onRefresh, showAlert, showConfirm,
         placeholder="قیمت محصول"
         disabled={editLoading}
       />
+      <input
+        type="number"
+        value={editStockQuantity}
+        onChange={(e) => setEditStockQuantity(e.target.value)}
+        placeholder="موجودی"
+        min="0"
+        disabled={editLoading}
+      />
       <textarea
         value={editDesc}
         onChange={(e) => setEditDesc(e.target.value)}
         placeholder="توضیحات"
         disabled={editLoading}
       />
+      <div style={{ display: 'flex', gap: 10 }}>
+        <input
+          type="number"
+          value={editAverageRating}
+          onChange={(e) => setEditAverageRating(e.target.value)}
+          placeholder="امتیاز (0-5)"
+          min="0"
+          max="5"
+          step="0.1"
+          disabled={editLoading}
+          style={{ flex: 1 }}
+        />
+        <input
+          type="number"
+          value={editReviewCount}
+          onChange={(e) => setEditReviewCount(e.target.value)}
+          placeholder="تعداد نظرات"
+          min="0"
+          disabled={editLoading}
+          style={{ flex: 1 }}
+        />
+      </div>
 
       <div className="modal-actions">
         <button 
@@ -448,15 +498,8 @@ function Orders({ showAlert, showConfirm, closeAlert }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const [userRole, setUserRole] = useState(null);
 
-  useEffect(() => {
-    const role = localStorage.getItem('userRole');
-    setUserRole(role);
-    loadOrders(role);
-  }, []);
-
-  const loadOrders = async (role = userRole) => {
+  const loadOrders = useCallback(async (role) => {
     setLoading(true);
     setError(null);
     try {
@@ -473,7 +516,12 @@ function Orders({ showAlert, showConfirm, closeAlert }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    const role = localStorage.getItem('userRole');
+    loadOrders(role);
+  }, [loadOrders]);
 
   const handleCancelOrder = async (orderId) => {
     showConfirm('آیا از کنسلی این سفارش مطمئن هستید؟', async () => {
@@ -611,6 +659,11 @@ function AddProduct({ onAdded, showAlert, showConfirm, closeAlert }) {
   const [type, setType] = useState('PHONE');
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  // فیلدهای جدید
+  const [stockQuantity, setStockQuantity] = useState('10');
+  const [brand, setBrand] = useState('');
+  const [averageRating, setAverageRating] = useState('0');
+  const [reviewCount, setReviewCount] = useState('0');
 
   const handleFileChange = (e) => {
     const f = e.target.files?.[0];
@@ -633,6 +686,10 @@ function AddProduct({ onAdded, showAlert, showConfirm, closeAlert }) {
         price: parseFloat(price),
         productType: type,
         imageUrl,
+        stockQuantity: parseInt(stockQuantity) || 0,
+        brand: brand.trim() || null,
+        averageRating: parseFloat(averageRating) || 0,
+        reviewCount: parseInt(reviewCount) || 0,
       };
       await createProduct(payload);
       showAlert('محصول با موفقیت اضافه شد!', 'success');
@@ -641,6 +698,10 @@ function AddProduct({ onAdded, showAlert, showConfirm, closeAlert }) {
       setPrice('');
       setType('PHONE');
       setFile(null);
+      setStockQuantity('10');
+      setBrand('');
+      setAverageRating('0');
+      setReviewCount('0');
       onAdded?.();
     } catch (err) {
       showAlert('خطا در ایجاد محصول', 'error');
@@ -676,11 +737,28 @@ function AddProduct({ onAdded, showAlert, showConfirm, closeAlert }) {
           onChange={(e) => setName(e.target.value)}
           required
         />
+        
+        <input
+          type="text"
+          placeholder="برند (مثال: Samsung, Apple)"
+          value={brand}
+          onChange={(e) => setBrand(e.target.value)}
+        />
+        
         <input
           type="number"
           placeholder="قیمت محصول"
           value={price}
           onChange={(e) => setPrice(e.target.value)}
+          required
+        />
+        
+        <input
+          type="number"
+          placeholder="موجودی انبار"
+          value={stockQuantity}
+          onChange={(e) => setStockQuantity(e.target.value)}
+          min="0"
           required
         />
 
@@ -697,6 +775,27 @@ function AddProduct({ onAdded, showAlert, showConfirm, closeAlert }) {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
+        
+        <div style={{ display: 'flex', gap: 10 }}>
+          <input
+            type="number"
+            placeholder="امتیاز (0-5)"
+            value={averageRating}
+            onChange={(e) => setAverageRating(e.target.value)}
+            min="0"
+            max="5"
+            step="0.1"
+            style={{ flex: 1 }}
+          />
+          <input
+            type="number"
+            placeholder="تعداد نظرات"
+            value={reviewCount}
+            onChange={(e) => setReviewCount(e.target.value)}
+            min="0"
+            style={{ flex: 1 }}
+          />
+        </div>
 
         <button type="submit" className="submit-btn" disabled={loading}>
           {loading ? 'در حال ارسال…' : 'اضافه کردن محصول'}

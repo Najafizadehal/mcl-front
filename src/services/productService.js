@@ -48,17 +48,28 @@ export async function createProduct(productData) {
 }
 
 /**
- * دریافت همه محصولات (با امکان فیلتر بر اساس نوع)
+ * دریافت همه محصولات (با امکان فیلتر بر اساس نوع و سایر پارامترها)
  * @param {string?} type - مقادیری مثل 'PHONE','REPAIR','LCD','SMALLPARTS','ACCESSORIES'
+ * @param {URLSearchParams?} additionalParams - پارامترهای اضافی برای فیلتر و مرتب‌سازی
  * @returns {Promise<Array>}
  */
-export async function getAllProducts(type) {
+export async function getAllProducts(type, additionalParams) {
   try {
-    const params = {};
-    if (type) {
-      params.type = type;
+    // ساخت پارامترها
+    let params = additionalParams || new URLSearchParams();
+    
+    // اگر type به صورت جداگانه پاس شده باشد
+    if (type && !params.has('type')) {
+      params.append('type', type);
     }
-    const res = await api.get(`${BASE_PATH}`, { params });
+    
+    // تبدیل URLSearchParams به Object برای axios
+    const paramsObj = {};
+    for (const [key, value] of params.entries()) {
+      paramsObj[key] = value;
+    }
+    
+    const res = await api.get(`${BASE_PATH}`, { params: paramsObj });
     return res.data;
   } catch (err) {
     console.error('خطا در دریافت محصولات:', err);

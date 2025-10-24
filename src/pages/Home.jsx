@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import '../styles/Home.css';
 // import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
 import BestSellers from '../components/BestSellers';
 import Footer from '../components/Footer';
+import SkeletonCard from '../components/common/SkeletonCard';
 import iconParts from '../assets/icons/smallpart.png';
 // import iconLCD from '../assets/icons/lcd.png';
 import iconAcc from '../assets/icons/accesories.png';
@@ -35,12 +36,26 @@ const Home = ({ cart, onAdd, onIncrement, onDecrement }) => {
   const [searchText, setSearchText] = useState("");
   const [modalProduct, setModalProduct] = useState(null);
   const [modalLoading, setModalLoading] = useState(false);
+  
+  // فیلترهای جدید
+  const [sortBy, setSortBy] = useState("");
+  const [priceRange, setPriceRange] = useState({ min: "", max: "" });
+  const [showFilters, setShowFilters] = useState(false);
+  const [inStockOnly, setInStockOnly] = useState(false);
 
-  const loadProducts = async (type) => {
+  const loadProducts = useCallback(async (type) => {
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchProducts(type);
+      // ساخت پارامترهای فیلتر
+      const params = new URLSearchParams();
+      if (type) params.append('type', type);
+      if (sortBy) params.append('sort', sortBy);
+      if (priceRange.min) params.append('minPrice', priceRange.min);
+      if (priceRange.max) params.append('maxPrice', priceRange.max);
+      if (inStockOnly) params.append('inStockOnly', 'true');
+      
+      const data = await fetchProducts(type, params);
       setProducts(data);
     } catch (err) {
       console.error('Failed to fetch products:', err);
@@ -48,11 +63,11 @@ const Home = ({ cart, onAdd, onIncrement, onDecrement }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [sortBy, priceRange.min, priceRange.max, inStockOnly]);
 
   useEffect(() => {
     loadProducts(); // initial load all
-  }, []);
+  }, [loadProducts]); // بارگذاری مجدد هنگام تغییر فیلترها
 
   const handleCategory = (cat) => {
     const newSelected = selectedId === cat.id ? null : cat.id;
@@ -89,19 +104,103 @@ const Home = ({ cart, onAdd, onIncrement, onDecrement }) => {
         onCategoryClick={handleCategory}
         selectedId={selectedId}
       />
-      {/* سرچ باکس */}
-      <div style={{ display: 'flex', justifyContent: 'center', margin: '24px 0 0 0' }}>
-        <input
-          className="search"
-          type="text"
-          placeholder="جستجوی محصول..."
-          value={searchText}
-          onChange={e => setSearchText(e.target.value)}
-          style={{ background: '#3fbf9f', color: '#fff', borderRadius: 8, maxWidth: 320 }}
-        />
+      
+      {/* بخش جستجو و فیلترها */}
+      <div className="filter-section">
+        <div className="search-filter-container">
+          {/* سرچ باکس */}
+          <input
+            className="search-input"
+            type="text"
+            placeholder="🔍 جستجوی محصول..."
+            value={searchText}
+            onChange={e => setSearchText(e.target.value)}
+          />
+          
+          {/* دکمه نمایش فیلترها */}
+          <button 
+            className="filter-toggle-btn"
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            {showFilters ? '✕ بستن فیلترها' : '⚙️ فیلترها'}
+          </button>
+        </div>
+        
+        {/* فیلترهای پیشرفته */}
+        {showFilters && (
+          <div className="advanced-filters">
+            {/* مرتب‌سازی */}
+            <div className="filter-group">
+              <label>مرتب‌سازی:</label>
+              <select 
+                value={sortBy} 
+                onChange={e => setSortBy(e.target.value)}
+                className="filter-select"
+              >
+                <option value="">پیش‌فرض</option>
+                <option value="price_asc">ارزان‌ترین</option>
+                <option value="price_desc">گران‌ترین</option>
+                <option value="rating">بالاترین امتیاز</option>
+                <option value="popular">محبوب‌ترین</option>
+              </select>
+            </div>
+            
+            {/* محدوده قیمت */}
+            <div className="filter-group">
+              <label>محدوده قیمت (تومان):</label>
+              <div className="price-range">
+                <input
+                  type="number"
+                  placeholder="از"
+                  value={priceRange.min}
+                  onChange={e => setPriceRange({ ...priceRange, min: e.target.value })}
+                  className="price-input"
+                />
+                <span>تا</span>
+                <input
+                  type="number"
+                  placeholder="تا"
+                  value={priceRange.max}
+                  onChange={e => setPriceRange({ ...priceRange, max: e.target.value })}
+                  className="price-input"
+                />
+              </div>
+            </div>
+            
+            {/* فقط موجود */}
+            <div className="filter-group">
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={inStockOnly}
+                  onChange={e => setInStockOnly(e.target.checked)}
+                />
+                <span>فقط کالاهای موجود</span>
+              </label>
+            </div>
+            
+            {/* دکمه پاک کردن فیلترها */}
+            <button 
+              className="clear-filters-btn"
+              onClick={() => {
+                setSortBy("");
+                setPriceRange({ min: "", max: "" });
+                setInStockOnly(false);
+              }}
+            >
+              پاک کردن فیلترها
+            </button>
+          </div>
+        )}
       </div>
+      
+      {/* نمایش محصولات */}
       {loading ? (
-        <p className="loading-text">در حال بارگذاری محصولات...</p>
+        <div className="skeleton-grid">
+          {[...Array(6)].map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
+        </div>
       ) : error ? (
         <p className="error-text">{error}</p>
       ) : (
@@ -113,6 +212,10 @@ const Home = ({ cart, onAdd, onIncrement, onDecrement }) => {
             img: p.imageUrl,
             description: p.description,
             productType: p.productType,
+            stockQuantity: p.stockQuantity,
+            averageRating: p.averageRating,
+            reviewCount: p.reviewCount,
+            brand: p.brand,
           }))}
           onAdd={onAdd}
           cart={cart}

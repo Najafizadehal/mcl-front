@@ -2,26 +2,106 @@
 import React from 'react';
 import './ProductCard.css';
 
-const ProductCard = ({ title, price, img, onAdd, quantity, onIncrement, onDecrement, onImageClick, active = true }) => (
-  <div className="product-card">
-    <div className="product-card__image-wrapper" style={{ cursor: onImageClick ? 'pointer' : undefined, position: 'relative' }}>
-      <img src={img} alt={title} onClick={onImageClick} style={{ opacity: active ? 1 : 0.4, filter: active ? 'none' : 'grayscale(60%)' }} />
-      {!active && (
-        <div className="product-card__inactive-overlay">غیرفعال</div>
-      )}
-    </div>
-    <h3>{title}</h3>
-    <p className="price">{price} تومان</p>
-    {quantity > 0 ? (
-      <div className="cart-qty-controls">
-        <button className="qty-btn" onClick={onDecrement}>-</button>
-        <span className="qty-value">{quantity}</span>
-        <button className="qty-btn" onClick={onIncrement}>+</button>
+const ProductCard = ({ 
+  title, 
+  price, 
+  img, 
+  onAdd, 
+  quantity, 
+  onIncrement, 
+  onDecrement, 
+  onImageClick, 
+  active = true,
+  stockQuantity,
+  averageRating,
+  reviewCount,
+  brand
+}) => {
+  // تابع نمایش ستاره‌ها
+  const renderStars = (rating) => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    
+    for (let i = 0; i < 5; i++) {
+      if (i < fullStars) {
+        stars.push(<span key={i} className="star filled">★</span>);
+      } else if (i === fullStars && hasHalfStar) {
+        stars.push(<span key={i} className="star half">★</span>);
+      } else {
+        stars.push(<span key={i} className="star empty">☆</span>);
+      }
+    }
+    return stars;
+  };
+
+  const isOutOfStock = stockQuantity !== undefined && stockQuantity <= 0;
+  const isLowStock = stockQuantity !== undefined && stockQuantity > 0 && stockQuantity <= 5;
+
+  return (
+    <div className="product-card">
+      <div className="product-card__image-wrapper" style={{ cursor: onImageClick ? 'pointer' : undefined, position: 'relative' }}>
+        <img src={img} alt={title} onClick={onImageClick} style={{ opacity: active && !isOutOfStock ? 1 : 0.4, filter: active && !isOutOfStock ? 'none' : 'grayscale(60%)' }} />
+        
+        {/* Badge های مختلف */}
+        {!active && <div className="product-card__badge badge-inactive">غیرفعال</div>}
+        {isOutOfStock && <div className="product-card__badge badge-out-of-stock">ناموجود</div>}
+        {isLowStock && <div className="product-card__badge badge-low-stock">فقط {stockQuantity} عدد!</div>}
+        {averageRating && averageRating >= 4.5 && <div className="product-card__badge badge-popular">⭐ محبوب</div>}
       </div>
-    ) : (
-      <button className="add-btn" onClick={onAdd}>افزودن به سبد</button>
-    )}
-  </div>
-);
+      
+      <div className="product-card__content">
+        {/* نمایش برند */}
+        {brand && <div className="product-card__brand">{brand}</div>}
+        
+        <h3 className="product-card__title">{title}</h3>
+        
+        {/* نمایش امتیاز */}
+        {averageRating !== undefined && averageRating > 0 && (
+          <div className="product-card__rating">
+            <div className="stars">
+              {renderStars(averageRating)}
+            </div>
+            <span className="rating-text">
+              {averageRating.toFixed(1)} ({reviewCount || 0})
+            </span>
+          </div>
+        )}
+        
+        <p className="price">{price} تومان</p>
+        
+        {/* نمایش موجودی */}
+        {stockQuantity !== undefined && (
+          <div className="product-card__stock">
+            {isOutOfStock ? (
+              <span className="stock-status out-of-stock">ناموجود</span>
+            ) : isLowStock ? (
+              <span className="stock-status low-stock">موجودی کم</span>
+            ) : (
+              <span className="stock-status in-stock">موجود</span>
+            )}
+          </div>
+        )}
+        
+        {/* دکمه های خرید */}
+        {quantity > 0 ? (
+          <div className="cart-qty-controls">
+            <button className="qty-btn" onClick={onDecrement}>-</button>
+            <span className="qty-value">{quantity}</span>
+            <button className="qty-btn" onClick={onIncrement}>+</button>
+          </div>
+        ) : (
+          <button 
+            className="add-btn" 
+            onClick={onAdd}
+            disabled={isOutOfStock || !active}
+          >
+            {isOutOfStock ? 'ناموجود' : 'افزودن به سبد'}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
 
 export default ProductCard;
