@@ -5,12 +5,15 @@ import Hero from '../components/Hero';
 import BestSellers from '../components/BestSellers';
 import Footer from '../components/Footer';
 import SkeletonCard from '../components/common/SkeletonCard';
+import ReviewForm from '../components/ReviewForm';
+import ReviewsList from '../components/ReviewsList';
 import iconParts from '../assets/icons/smallpart.png';
 // import iconLCD from '../assets/icons/lcd.png';
 import iconAcc from '../assets/icons/accesories.png';
 import iconTools from '../assets/icons/repair.png';
 import iconMobile from '../assets/icons/mobile.png';
 import { getAllProducts as fetchProducts, getProductById } from '../services/productService';
+import { createOrUpdateReview, getProductReviews, deleteReview } from '../services/reviewService';
 
 const categories = [
   { id: 1, label: 'قطعات ریز', icon: iconParts,  type: 'SMALLPARTS',  size: 64 },
@@ -42,6 +45,10 @@ const Home = ({ cart, onAdd, onIncrement, onDecrement }) => {
   const [priceRange, setPriceRange] = useState({ min: "", max: "" });
   const [showFilters, setShowFilters] = useState(false);
   const [inStockOnly, setInStockOnly] = useState(false);
+  
+  // state های مربوط به نظرات
+  const [reviews, setReviews] = useState([]);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
 
   const loadProducts = useCallback(async (type) => {
     setLoading(true);
@@ -78,17 +85,66 @@ const Home = ({ cart, onAdd, onIncrement, onDecrement }) => {
   // نمایش پاپ‌آپ اطلاعات کامل محصول
   const handleProductClick = async (product) => {
     setModalLoading(true);
+    setReviewsLoading(true);
     try {
       // اگر اطلاعات کامل نیست، از سرور بگیر
       const fullProduct = await getProductById(product.id);
       setModalProduct(fullProduct);
+      
+      try {
+        const productReviews = await getProductReviews(product.id);
+        setReviews(productReviews || []);
+      } catch (reviewErr) {
+        console.error('خطا در دریافت نظرات:', reviewErr);
+        setReviews([]);
+      }
     } catch (err) {
       setModalProduct({ ...product, error: 'خطا در دریافت اطلاعات محصول' });
     } finally {
       setModalLoading(false);
+      setReviewsLoading(false);
     }
   };
-  const closeModal = () => setModalProduct(null);
+  
+  const closeModal = () => {
+    setModalProduct(null);
+    setReviews([]);
+  };
+  
+  const handleSubmitReview = async (rating, comment) => {
+    if (!modalProduct?.id) return;
+    
+    try {
+      await createOrUpdateReview(modalProduct.id, rating, comment);
+      const updatedReviews = await getProductReviews(modalProduct.id);
+      setReviews(updatedReviews || []);
+      const updatedProduct = await getProductById(modalProduct.id);
+      setModalProduct(updatedProduct);
+      loadProducts(selectedId ? categories.find(c => c.id === selectedId)?.type : null);
+      window.showAlert?.('نظر شما با موفقیت ثبت شد!', 'success');
+    } catch (error) {
+      console.error('خطا در ثبت نظر:', error);
+      const errorMessage = error.response?.data?.message || 'خطا در ثبت نظر. لطفاً دوباره تلاش کنید.';
+      window.showAlert?.(errorMessage, 'error');
+    }
+  };
+  
+  const handleDeleteReview = async (reviewId) => {
+    if (!window.confirm('آیا از حذف این نظر اطمینان دارید؟')) return;
+    
+    try {
+      await deleteReview(reviewId);
+      const updatedReviews = await getProductReviews(modalProduct.id);
+      setReviews(updatedReviews || []);
+      const updatedProduct = await getProductById(modalProduct.id);
+      setModalProduct(updatedProduct);
+      loadProducts(selectedId ? categories.find(c => c.id === selectedId)?.type : null);
+      window.showAlert?.('نظر با موفقیت حذف شد', 'success');
+    } catch (error) {
+      console.error('خطا در حذف نظر:', error);
+      window.showAlert?.('خطا در حذف نظر', 'error');
+    }
+  };
 
   // فیلتر محصولات بر اساس جستجو
   const filteredProducts = products.filter(p =>
@@ -235,11 +291,74 @@ const Home = ({ cart, onAdd, onIncrement, onDecrement }) => {
               <p className="error-text">{modalProduct.error}</p>
             ) : (
               <>
-                <img src={modalProduct.imageUrl} alt={modalProduct.name} style={{ maxWidth: 200, borderRadius: 12, marginBottom: 16 }} />
-                <h2 style={{ color: '#3fbf9f' }}>{modalProduct.name}</h2>
-                <p style={{ fontWeight: 'bold', fontSize: 18 }}>{Number(modalProduct.price).toLocaleString()} تومان</p>
-                <p style={{ margin: '12px 0', color: '#444' }}>{modalProduct.description || 'بدون توضیحات'}</p>
-                <p style={{ fontSize: 14, color: '#888' }}>دسته‌بندی: {modalProduct.productType}</p>
+                {/* اطلاعات محصول */}
+                <div className="product-modal-header">
+                  <img src={modalProduct.imageUrl} alt={modalProduct.name} className="modal-product-image" />
+                  <div className="modal-product-info">
+                    <h2>{modalProduct.name}</h2>
+                    {modalProduct.brand && (
+                      <p className="modal-product-brand">برند: {modalProduct.brand}</p>
+                    )}
+                    <p className="modal-product-price">{Number(modalProduct.price).toLocaleString()} تومان</p>
+                    <p className="modal-product-description">{modalProduct.description || 'بدون توضیحات'}</p>
+                    <p className="modal-product-category">دسته‌بندی: {modalProduct.productType}</p>
+                    
+                    {/* نمایش امتیاز */}
+                    {modalProduct.averageRating > 0 && (
+                      <div className="modal-product-rating">
+                        <span className="rating-stars">
+                          {[...Array(5)].map((_, i) => (
+                            <span key={i} className={i < Math.round(modalProduct.averageRating) ? 'filled' : 'empty'}>
+                              ★
+                            </span>
+                          ))}
+                        </span>
+                        <span className="rating-text">
+                          {modalProduct.averageRating.toFixed(1)} ({modalProduct.reviewCount || 0} نظر)
+                        </span>
+                      </div>
+                    )}
+                    
+                    {/* موجودی */}
+                    {modalProduct.stockQuantity !== undefined && (
+                      <p className="modal-product-stock">
+                        موجودی: <span className={modalProduct.stockQuantity > 0 ? 'in-stock' : 'out-of-stock'}>
+                          {modalProduct.stockQuantity > 0 ? `${modalProduct.stockQuantity} عدد` : 'ناموجود'}
+                        </span>
+                      </p>
+                    )}
+                  </div>
+                </div>
+                
+                <hr className="modal-divider" />
+                
+                {/* فرم ثبت نظر */}
+                <div className="modal-review-section">
+                  <h3 className="section-title">نظر خود را ثبت کنید</h3>
+                  <ReviewForm onSubmit={handleSubmitReview} />
+                </div>
+                
+                <hr className="modal-divider" />
+                
+                {/* لیست نظرات */}
+                <div className="modal-reviews-list">
+                  {reviewsLoading ? (
+                    <p>در حال بارگذاری نظرات...</p>
+                  ) : (
+                    <ReviewsList 
+                      reviews={reviews}
+                      currentUserId={(() => {
+                        try {
+                          const user = JSON.parse(localStorage.getItem('user'));
+                          return user?.id;
+                        } catch {
+                          return null;
+                        }
+                      })()}
+                      onDelete={handleDeleteReview}
+                    />
+                  )}
+                </div>
               </>
             )}
           </div>

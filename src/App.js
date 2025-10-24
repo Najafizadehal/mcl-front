@@ -3,6 +3,7 @@ import Login          from './pages/Login';
 import Register       from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import Home           from './pages/Home';
+import Cart           from './pages/Cart';
 import ProtectedRoute from './routes/ProtectedRoute';
 import Profile from './pages/Profile';
 import React, { useState, useEffect } from 'react';
@@ -72,6 +73,18 @@ export default function App() {
     showAlert(`تعداد ${item.title || item.name} کاهش یافت`, 'info');
   };
 
+  const handleRemove = item => {
+    setCart(prev => {
+      const { [item.id]: _, ...rest } = prev;
+      return rest;
+    });
+    showAlert(`${item.title || item.name} از سبد خرید حذف شد`, 'warning');
+  };
+
+  const handleClearCart = () => {
+    setCart({});
+  };
+
   const handleSearch = text => {
     console.log('جست‌وجو:', text);
   };
@@ -124,6 +137,7 @@ export default function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/" element={<Home cart={cart} onAdd={handleAdd} onIncrement={handleIncrement} onDecrement={handleDecrement} />} />
           <Route path="/home" element={<Home cart={cart} onAdd={handleAdd} onIncrement={handleIncrement} onDecrement={handleDecrement} />} />
+          <Route path="/cart" element={<Cart cart={cart} cartItems={cartItems} onIncrement={handleIncrement} onDecrement={handleDecrement} onRemove={handleRemove} onClearCart={handleClearCart} />} />
           <Route path="/profile" element={<Profile />} />
         </Route>
 
