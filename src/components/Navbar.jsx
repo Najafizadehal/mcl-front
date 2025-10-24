@@ -43,6 +43,11 @@ const Navbar = ({ onSearch, cart, cartItems, onIncrement, onDecrement }) => {
       {/* ───── راستِ نوار: برند ───── */}
       <div className="brand-group" style={{ display: 'flex', alignItems: 'center', gap: '12px', position: 'relative' }}>
         <h1 className="brand">Mobile Center Lamerd</h1>
+        
+        <button className="wishlist-nav-btn" onClick={() => navigate('/wishlist')} aria-label="لیست علاقه‌مندی‌ها" style={{ background: 'none', border: 'none', cursor: 'pointer', position: 'relative', fontSize: '28px', padding: '4px' }}>
+          ❤️
+        </button>
+        
         <button ref={cartBtnRef} className="cart-btn" onClick={() => navigate('/cart')} aria-label="سبد خرید" style={{ background: 'none', border: 'none', cursor: 'pointer', position: 'relative' }}>
           <img src={productsIcon} alt="cart" className="cart-icon" style={{ width: 32, height: 32 }} />
           {cartItems.length > 0 && (

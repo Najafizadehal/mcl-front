@@ -4,6 +4,7 @@ import Register       from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import Home           from './pages/Home';
 import Cart           from './pages/Cart';
+import Wishlist       from './pages/Wishlist';
 import ProtectedRoute from './routes/ProtectedRoute';
 import Profile from './pages/Profile';
 import React, { useState, useEffect } from 'react';
@@ -138,6 +139,7 @@ export default function App() {
           <Route path="/" element={<Home cart={cart} onAdd={handleAdd} onIncrement={handleIncrement} onDecrement={handleDecrement} />} />
           <Route path="/home" element={<Home cart={cart} onAdd={handleAdd} onIncrement={handleIncrement} onDecrement={handleDecrement} />} />
           <Route path="/cart" element={<Cart cart={cart} cartItems={cartItems} onIncrement={handleIncrement} onDecrement={handleDecrement} onRemove={handleRemove} onClearCart={handleClearCart} />} />
+          <Route path="/wishlist" element={<Wishlist onAdd={handleAdd} cart={cart} onIncrement={handleIncrement} onDecrement={handleDecrement} />} />
           <Route path="/profile" element={<Profile />} />
         </Route>
 

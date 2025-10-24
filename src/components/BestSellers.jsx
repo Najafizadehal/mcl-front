@@ -1,7 +1,7 @@
 import React from 'react';
 import ProductCard from './productCart/ProductCard';
 
-const BestSellers = ({ items, onAdd, cart, onIncrement, onDecrement, onProductClick }) => {
+const BestSellers = ({ items, onAdd, cart, onIncrement, onDecrement, onProductClick, onToggleWishlist }) => {
   // اگر هیچ محصولی نیست
   if (!items || items.length === 0) {
     return (
@@ -34,6 +34,8 @@ const BestSellers = ({ items, onAdd, cart, onIncrement, onDecrement, onProductCl
             averageRating={p.averageRating}
             reviewCount={p.reviewCount}
             brand={p.brand}
+            isInWishlist={p.isInWishlist}
+            onToggleWishlist={onToggleWishlist ? () => onToggleWishlist(p.id) : undefined}
           />
         ))}
       </div>

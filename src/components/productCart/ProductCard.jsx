@@ -15,7 +15,9 @@ const ProductCard = ({
   stockQuantity,
   averageRating,
   reviewCount,
-  brand
+  brand,
+  isInWishlist = false,
+  onToggleWishlist
 }) => {
   // تابع نمایش ستاره‌ها
   const renderStars = (rating) => {
@@ -43,7 +45,19 @@ const ProductCard = ({
       <div className="product-card__image-wrapper" style={{ cursor: onImageClick ? 'pointer' : undefined, position: 'relative' }}>
         <img src={img} alt={title} onClick={onImageClick} style={{ opacity: active && !isOutOfStock ? 1 : 0.4, filter: active && !isOutOfStock ? 'none' : 'grayscale(60%)' }} />
         
-        {/* Badge های مختلف */}
+        {onToggleWishlist && (
+          <button 
+            className={`wishlist-btn ${isInWishlist ? 'active' : ''}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleWishlist();
+            }}
+            aria-label={isInWishlist ? 'حذف از علاقه‌مندی‌ها' : 'افزودن به علاقه‌مندی‌ها'}
+          >
+            {isInWishlist ? '❤️' : '🤍'}
+          </button>
+        )}
+        
         {!active && <div className="product-card__badge badge-inactive">غیرفعال</div>}
         {isOutOfStock && <div className="product-card__badge badge-out-of-stock">ناموجود</div>}
         {isLowStock && <div className="product-card__badge badge-low-stock">فقط {stockQuantity} عدد!</div>}
@@ -61,10 +75,7 @@ const ProductCard = ({
             <div className="stars">
               {renderStars(averageRating)}
             </div>
-            <span className="rating-text">
-              {averageRating.toFixed(1)}
-              {reviewCount > 0 && ` (${reviewCount})`}
-            </span>
+
           </div>
         )}
         

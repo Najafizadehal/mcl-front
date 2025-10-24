@@ -14,6 +14,7 @@ import iconTools from '../assets/icons/repair.png';
 import iconMobile from '../assets/icons/mobile.png';
 import { getAllProducts as fetchProducts, getProductById } from '../services/productService';
 import { createOrUpdateReview, getProductReviews, deleteReview } from '../services/reviewService';
+import { addToWishlist, removeFromWishlist, checkInWishlist } from '../services/wishlistService';
 
 const categories = [
   { id: 1, label: 'قطعات ریز', icon: iconParts,  type: 'SMALLPARTS',  size: 64 },
@@ -49,6 +50,9 @@ const Home = ({ cart, onAdd, onIncrement, onDecrement }) => {
   // state های مربوط به نظرات
   const [reviews, setReviews] = useState([]);
   const [reviewsLoading, setReviewsLoading] = useState(false);
+  
+  // state های مربوط به wishlist
+  const [wishlistStatus, setWishlistStatus] = useState({});
 
   const loadProducts = useCallback(async (type) => {
     setLoading(true);
@@ -73,8 +77,25 @@ const Home = ({ cart, onAdd, onIncrement, onDecrement }) => {
   }, [sortBy, priceRange.min, priceRange.max, inStockOnly]);
 
   useEffect(() => {
-    loadProducts(); // initial load all
-  }, [loadProducts]); // بارگذاری مجدد هنگام تغییر فیلترها
+    loadProducts();
+  }, [loadProducts]);
+  
+  useEffect(() => {
+    const loadWishlistStatus = async () => {
+      if (products.length === 0) return;
+      const statusMap = {};
+      for (const product of products) {
+        try {
+          const inWishlist = await checkInWishlist(product.id);
+          statusMap[product.id] = inWishlist;
+        } catch (err) {
+          console.error(`Error checking wishlist for product ${product.id}:`, err);
+        }
+      }
+      setWishlistStatus(statusMap);
+    };
+    loadWishlistStatus();
+  }, [products]);
 
   const handleCategory = (cat) => {
     const newSelected = selectedId === cat.id ? null : cat.id;
@@ -146,7 +167,25 @@ const Home = ({ cart, onAdd, onIncrement, onDecrement }) => {
     }
   };
 
-  // فیلتر محصولات بر اساس جستجو
+  const handleToggleWishlist = async (productId) => {
+    const isCurrentlyInWishlist = wishlistStatus[productId];
+    
+    try {
+      if (isCurrentlyInWishlist) {
+        await removeFromWishlist(productId);
+        setWishlistStatus(prev => ({ ...prev, [productId]: false }));
+        window.showAlert?.('محصول از لیست علاقه‌مندی‌ها حذف شد', 'info');
+      } else {
+        await addToWishlist(productId);
+        setWishlistStatus(prev => ({ ...prev, [productId]: true }));
+        window.showAlert?.('محصول به لیست علاقه‌مندی‌ها اضافه شد', 'success');
+      }
+    } catch (err) {
+      console.error('Error toggling wishlist:', err);
+      window.showAlert?.('خطا در به‌روزرسانی لیست علاقه‌مندی‌ها', 'error');
+    }
+  };
+
   const filteredProducts = products.filter(p =>
     p.name && p.name.toLowerCase().includes(searchText.toLowerCase())
   );
@@ -272,12 +311,14 @@ const Home = ({ cart, onAdd, onIncrement, onDecrement }) => {
             averageRating: p.averageRating,
             reviewCount: p.reviewCount,
             brand: p.brand,
+            isInWishlist: wishlistStatus[p.id] || false,
           }))}
           onAdd={onAdd}
           cart={cart}
           onIncrement={onIncrement}
           onDecrement={onDecrement}
           onProductClick={handleProductClick}
+          onToggleWishlist={handleToggleWishlist}
         />
       )}
       {/* Modal for product details */}
@@ -313,9 +354,7 @@ const Home = ({ cart, onAdd, onIncrement, onDecrement }) => {
                             </span>
                           ))}
                         </span>
-                        <span className="rating-text">
-                          {modalProduct.averageRating.toFixed(1)} ({modalProduct.reviewCount || 0} نظر)
-                        </span>
+
                       </div>
                     )}
                     
