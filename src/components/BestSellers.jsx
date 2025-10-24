@@ -26,7 +26,7 @@ const BestSellers = ({ items, onAdd, cart, onIncrement, onDecrement, onProductCl
             price={p.price}
             img={p.img}
             onAdd={() => onAdd(p)}
-            quantity={cart[p.id]?.quantity || 0}
+            quantity={cart[p.id]?.quantity || undefined}
             onIncrement={() => onIncrement(p)}
             onDecrement={() => onDecrement(p)}
             onImageClick={() => onProductClick && onProductClick(p)}

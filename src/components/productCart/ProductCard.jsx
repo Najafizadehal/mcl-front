@@ -60,8 +60,7 @@ const ProductCard = ({
         
         {!active && <div className="product-card__badge badge-inactive">غیرفعال</div>}
         {isOutOfStock && <div className="product-card__badge badge-out-of-stock">ناموجود</div>}
-        {isLowStock && <div className="product-card__badge badge-low-stock">فقط {stockQuantity} عدد!</div>}
-        {averageRating && averageRating >= 4.5 && <div className="product-card__badge badge-popular">⭐ محبوب</div>}
+        {isLowStock && stockQuantity > 0 && <div className="product-card__badge badge-low-stock">فقط {stockQuantity} عدد!</div>}
       </div>
       
       <div className="product-card__content">
@@ -75,7 +74,9 @@ const ProductCard = ({
             <div className="stars">
               {renderStars(averageRating)}
             </div>
-
+            {reviewCount && reviewCount > 0 && (
+              <span className="rating-text">({reviewCount})</span>
+            )}
           </div>
         )}
         
@@ -95,7 +96,7 @@ const ProductCard = ({
         )}
         
         {/* دکمه های خرید */}
-        {quantity > 0 ? (
+        {quantity && quantity > 0 ? (
           <div className="cart-qty-controls">
             <button className="qty-btn" onClick={onDecrement}>-</button>
             <span className="qty-value">{quantity}</span>
