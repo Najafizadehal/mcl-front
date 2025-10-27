@@ -3,7 +3,7 @@
 }
 
 .reviews-title {
-  color: var(--green, #3fbf9f);
+  color: var(--green, #20B2AA);
   font-size: 20px;
   font-weight: 700;
   margin-bottom: 16px;
@@ -36,7 +36,7 @@
   right: 0;
   width: 4px;
   height: 100%;
-  background: linear-gradient(135deg, #1dbf73, #3fbf9f);
+  background: linear-gradient(135deg, #40E0D0, #20B2AA);
   transform: scaleY(0);
   transition: transform 0.3s ease;
 }
@@ -67,14 +67,14 @@
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #1dbf73, #3fbf9f);
+  background: linear-gradient(135deg, #40E0D0, #20B2AA);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 22px;
   font-weight: 800;
-  box-shadow: 0 4px 12px rgba(31, 191, 115, 0.3);
+  box-shadow: 0 4px 12px rgba(32, 178, 170, 0.3);
   border: 3px solid #fff;
   flex-shrink: 0;
 }
@@ -92,7 +92,7 @@
   display: inline-block;
   width: 18px;
   height: 18px;
-  background: #1dbf73;
+  background: #40E0D0;
   color: #fff;
   border-radius: 50%;
   font-size: 11px;
@@ -139,7 +139,7 @@
   padding: 12px;
   background: #f8f8f8;
   border-radius: 8px;
-  border-right: 3px solid var(--green, #3fbf9f);
+  border-right: 3px solid var(--green, #20B2AA);
 }
 
 .review-actions {

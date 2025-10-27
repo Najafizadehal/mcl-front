@@ -1,6 +1,6 @@
 :root {
-  --green: #109e86;
-  --light-green: #9ce3d8;
+  --green: #20B2AA;
+  --light-green: #7FFFD4;
 }
 
 /* کانتینر کلی */
@@ -226,7 +226,7 @@
 }
 .image-upload:hover {
   border-color: var(--light-green);
-  background: #f9fefa;
+  background: #f0fdfa;
 }
 .image-upload input {
   position: absolute;
@@ -639,8 +639,8 @@
 }
 .admin-green-input:focus {
   outline: none;
-  border-color: #1dbf73;
-  box-shadow: 0 0 0 2px #3fbf9f22;
+  border-color: #40E0D0;
+  box-shadow: 0 0 0 2px #20B2AA22;
 }
 
 .discount-table-flex {
@@ -669,7 +669,7 @@
   transition: box-shadow 0.15s;
 }
 .discount-row:hover {
-  box-shadow: 0 2px 8px #3fbf9f22;
+  box-shadow: 0 2px 8px #20B2AA22;
 }
 .discount-row .col, .discount-header .col {
   flex: 1;
@@ -690,7 +690,7 @@
 .order-details-card {
   background: #fff;
   border-radius: 16px;
-  box-shadow: 0 4px 24px #3fbf9f22;
+  box-shadow: 0 4px 24px #20B2AA22;
   padding: 32px 28px 24px 28px;
   min-width: 320px;
   max-width: 480px;
@@ -711,10 +711,10 @@
   border-radius: 10px;
   padding: 16px 18px 10px 18px;
   margin-bottom: 0;
-  box-shadow: 0 1px 4px #3fbf9f11;
+  box-shadow: 0 1px 4px #20B2AA11;
 }
 .order-details-title {
-  color: #3fbf9f;
+  color: #20B2AA;
   font-size: 1.1rem;
   font-weight: 700;
   margin-bottom: 10px;
@@ -739,7 +739,7 @@
 }
 .discount-code-badge {
   background: #e7f7f4;
-  color: #109e86;
+  color: #20B2AA;
   border-radius: 8px;
   padding: 2px 10px;
   font-weight: 600;
@@ -759,7 +759,7 @@
   background: #f8f8f8;
   border-radius: 8px;
   padding: 8px 12px;
-  box-shadow: 0 1px 4px #3fbf9f11;
+  box-shadow: 0 1px 4px #20B2AA11;
 }
 @media (max-width: 600px) {
   .order-details-card {
@@ -784,7 +784,7 @@
   transition: background 0.2s, color 0.2s;
 }
 .alert-btn.confirm {
-  background: var(--green, #3fbf9f);
+  background: var(--green, #20B2AA);
   color: #fff;
 }
 .alert-btn.cancel {

@@ -63,7 +63,7 @@
 
 .review-form textarea:focus {
   outline: none;
-  border-color: var(--green, #3fbf9f);
+  border-color: var(--green, #20B2AA);
 }
 
 .char-count {
@@ -77,7 +77,7 @@
 .submit-review-btn {
   width: 100%;
   padding: 14px 24px;
-  background: linear-gradient(135deg, #1dbf73 0%, #3fbf9f 100%);
+  background: linear-gradient(135deg, #40E0D0 0%, #20B2AA 100%);
   color: #fff;
   border: none;
   border-radius: 12px;
@@ -85,7 +85,7 @@
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(31,191,115,0.2);
+  box-shadow: 0 4px 12px rgba(32,178,170,0.2);
   position: relative;
   overflow: hidden;
 }
@@ -107,7 +107,7 @@
 
 .submit-review-btn:hover:not(:disabled) {
   transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(31,191,115,0.35);
+  box-shadow: 0 8px 20px rgba(32,178,170,0.35);
 }
 
 .submit-review-btn:disabled {

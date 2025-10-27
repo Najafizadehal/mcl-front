@@ -1,5 +1,5 @@
 :root {
-  --green: #3fbf9f;
+  --green: #20B2AA; 
 }
 
 html,
@@ -32,8 +32,8 @@ body {
   z-index: 10;
 }
 .navbar-scrolled {
-  background: var(--green, #3fbf9f) !important;
-  box-shadow: 0 2px 12px rgba(63,191,159,0.10);
+  background: var(--green, #20B2AA) !important;
+  box-shadow: 0 2px 12px rgba(32,178,170,0.10);
   transition: background 0.25s, box-shadow 0.25s;
 }
 
@@ -314,7 +314,7 @@ body { padding-bottom: 40px; }
 .modal-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(60, 191, 159, 0.15); /* site accent color, semi-transparent */
+  background: rgba(32, 178, 170, 0.15); /* site accent color, semi-transparent */
   z-index: 1000;
   display: flex;
   align-items: center;
@@ -324,7 +324,7 @@ body { padding-bottom: 40px; }
 .product-modal.modal-content {
   background: #fff;
   border-radius: 18px;
-  box-shadow: 0 8px 32px rgba(60,191,159,0.18);
+  box-shadow: 0 8px 32px rgba(32,178,170,0.18);
   padding: 28px 18px 20px 18px;
   min-width: 260px;
   max-width: 380px;
@@ -356,12 +356,12 @@ body { padding-bottom: 40px; }
   background: none;
   border: none;
   font-size: 2rem;
-  color: #3fbf9f;
+  color: #20B2AA;
   cursor: pointer;
   transition: color 0.2s;
 }
 .close-btn:hover {
-  color: #1e7e6b;
+  color: #008B8B;
 }
 
 /* فیلتر سکشن */
@@ -394,7 +394,7 @@ body { padding-bottom: 40px; }
 
 .search-input:focus {
   border-color: var(--green);
-  box-shadow: 0 0 0 3px rgba(63, 191, 159, 0.1);
+  box-shadow: 0 0 0 3px rgba(32, 178, 170, 0.1);
 }
 
 .filter-toggle-btn {
@@ -407,13 +407,13 @@ body { padding-bottom: 40px; }
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
-  box-shadow: 0 2px 8px rgba(63, 191, 159, 0.2);
+  box-shadow: 0 2px 8px rgba(32, 178, 170, 0.2);
 }
 
 .filter-toggle-btn:hover {
-  background: #35a88a;
+  background: #00CED1;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(63, 191, 159, 0.3);
+  box-shadow: 0 4px 12px rgba(32, 178, 170, 0.3);
 }
 
 /* فیلترهای پیشرفته */
@@ -630,7 +630,7 @@ body { padding-bottom: 40px; }
 }
 
 .modal-product-info h2 {
-  background: linear-gradient(135deg, #1dbf73, #3fbf9f);
+  background: linear-gradient(135deg, #40E0D0, #20B2AA);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -654,7 +654,7 @@ body { padding-bottom: 40px; }
 }
 
 .modal-product-price {
-  background: linear-gradient(135deg, #1dbf73, #3fbf9f);
+  background: linear-gradient(135deg, #40E0D0, #20B2AA);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -672,7 +672,7 @@ body { padding-bottom: 40px; }
   padding: 16px;
   background: #f9fafb;
   border-radius: 12px;
-  border-right: 4px solid #3fbf9f;
+  border-right: 4px solid #20B2AA;
 }
 
 .modal-product-category {
@@ -789,7 +789,7 @@ body { padding-bottom: 40px; }
   content: '';
   width: 4px;
   height: 24px;
-  background: linear-gradient(135deg, #1dbf73, #3fbf9f);
+  background: linear-gradient(135deg, #40E0D0, #20B2AA);
   border-radius: 4px;
 }
 

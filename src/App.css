@@ -133,7 +133,7 @@ body,
 .cart-checkout-btn {
   width: 100%;
   margin-top: 16px;
-  background: var(--green, #1dbf73);
+  background: var(--green, #20B2AA);
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -142,8 +142,8 @@ body,
   font-size: 1rem;
   cursor: pointer;
   transition: background 0.2s;
-  box-shadow: 0 2px 8px rgba(30,191,115,0.07);
+  box-shadow: 0 2px 8px rgba(32,178,170,0.07);
 }
 .cart-checkout-btn:hover {
-  background: #17a864;
+  background: #00CED1;
 }

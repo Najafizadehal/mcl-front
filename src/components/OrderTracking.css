@@ -110,9 +110,9 @@
 
 .progress-step.completed .step-icon,
 .progress-step.active .step-icon {
-  background: #3fbf9f;
-  border-color: #3fbf9f;
-  box-shadow: 0 4px 12px rgba(63, 191, 159, 0.3);
+  background: #20B2AA;
+  border-color: #20B2AA;
+  box-shadow: 0 4px 12px rgba(32, 178, 170, 0.3);
   transform: scale(1.1);
 }
 
@@ -122,10 +122,10 @@
 
 @keyframes pulse {
   0%, 100% {
-    box-shadow: 0 4px 12px rgba(63, 191, 159, 0.3);
+    box-shadow: 0 4px 12px rgba(32, 178, 170, 0.3);
   }
   50% {
-    box-shadow: 0 4px 20px rgba(63, 191, 159, 0.6);
+    box-shadow: 0 4px 20px rgba(32, 178, 170, 0.6);
   }
 }
 
@@ -138,7 +138,7 @@
 
 .progress-step.completed .step-label,
 .progress-step.active .step-label {
-  color: #3fbf9f;
+  color: #20B2AA;
   font-weight: 600;
 }
 
@@ -154,7 +154,7 @@
 }
 
 .step-line.completed {
-  background: #3fbf9f;
+  background: #20B2AA;
 }
 
 /* مراحل لغو شده */
@@ -216,7 +216,7 @@
 .detail-value.price {
   font-weight: bold;
   font-size: 18px;
-  color: #3fbf9f;
+  color: #20B2AA;
 }
 
 .detail-value.discount {
@@ -225,7 +225,7 @@
 }
 
 .remaining-days {
-  color: #3fbf9f;
+  color: #20B2AA;
   font-weight: 600;
   font-size: 14px;
 }
@@ -279,7 +279,7 @@
 
 .item-price {
   font-weight: 600;
-  color: #3fbf9f;
+  color: #20B2AA;
   font-size: 16px;
 }
 

@@ -40,7 +40,7 @@
 }
 
 .continue-shopping-btn {
-  background: var(--green, #3fbf9f);
+  background: var(--green, #20B2AA);
   color: #fff;
   border: none;
   padding: 14px 32px;
@@ -52,9 +52,9 @@
 }
 
 .continue-shopping-btn:hover {
-  background: #35a88a;
+  background: #00CED1;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(63, 191, 159, 0.3);
+  box-shadow: 0 4px 12px rgba(32, 178, 170, 0.3);
 }
 
 /* Items Section */
@@ -65,7 +65,7 @@
 }
 
 .cart-title {
-  color: var(--green, #3fbf9f);
+  color: var(--green, #20B2AA);
   font-size: 24px;
   font-weight: 700;
   margin-bottom: 8px;
@@ -133,7 +133,7 @@
 .price-value {
   font-size: 16px;
   font-weight: 700;
-  color: var(--green, #3fbf9f);
+  color: var(--green, #20B2AA);
 }
 
 .cart-item-actions {
@@ -163,11 +163,11 @@
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
-  color: var(--green, #3fbf9f);
+  color: var(--green, #20B2AA);
 }
 
 .qty-btn:hover {
-  background: var(--green, #3fbf9f);
+  background: var(--green, #20B2AA);
   color: #fff;
 }
 
@@ -237,7 +237,7 @@
 .total-price {
   font-size: 20px;
   font-weight: 700;
-  color: var(--green, #3fbf9f);
+  color: var(--green, #20B2AA);
 }
 
 .discount-section {
@@ -271,12 +271,12 @@
 
 .discount-input-group input:focus {
   outline: none;
-  border-color: var(--green, #3fbf9f);
+  border-color: var(--green, #20B2AA);
 }
 
 .apply-discount-btn {
   padding: 10px 20px;
-  background: var(--green, #3fbf9f);
+  background: var(--green, #20B2AA);
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -287,20 +287,20 @@
 }
 
 .apply-discount-btn:hover {
-  background: #35a88a;
+  background: #00CED1;
 }
 
 .discount-message {
   margin-top: 8px;
   font-size: 13px;
-  color: #1dbf73;
+  color: #40E0D0;
   font-weight: 600;
 }
 
 .checkout-btn {
   width: 100%;
   padding: 16px;
-  background: var(--green, #3fbf9f);
+  background: var(--green, #20B2AA);
   color: #fff;
   border: none;
   border-radius: 10px;
@@ -312,9 +312,9 @@
 }
 
 .checkout-btn:hover:not(:disabled) {
-  background: #35a88a;
+  background: #00CED1;
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(63, 191, 159, 0.3);
+  box-shadow: 0 6px 16px rgba(32, 178, 170, 0.3);
 }
 
 .checkout-btn:disabled {
@@ -327,7 +327,7 @@
   width: 100%;
   padding: 12px;
   background: none;
-  color: var(--green, #3fbf9f);
+  color: var(--green, #20B2AA);
   border: 2px solid var(--green, #3fbf9f);
   border-radius: 8px;
   font-size: 14px;
@@ -338,7 +338,7 @@
 }
 
 .continue-shopping-link:hover {
-  background: var(--green, #3fbf9f);
+  background: var(--green, #20B2AA);
   color: #fff;
 }
 

@@ -36,14 +36,14 @@
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, #3fbf9f, #1dbf73);
+    background: linear-gradient(90deg, #20B2AA, #40E0D0);
     transform: scaleX(0);
     transition: transform 0.3s ease;
 }
 
 .product-card:hover {
-    box-shadow: 0 12px 32px rgba(31,191,115,0.15), 0 4px 8px rgba(0,0,0,0.08);
-    border-color: #3fbf9f;
+    box-shadow: 0 12px 32px rgba(32,178,170,0.15), 0 4px 8px rgba(0,0,0,0.08);
+    border-color: #20B2AA;
     transform: translateY(-8px);
 }
 
@@ -140,7 +140,7 @@
 }
 
 .product-card .price {
-    background: linear-gradient(135deg, #1dbf73, #3fbf9f);
+    background: linear-gradient(135deg, #40E0D0, #20B2AA);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -153,7 +153,7 @@
 
 .product-card .add-btn {
     margin-top: auto;
-    background: linear-gradient(135deg, #1dbf73 0%, #3fbf9f 100%);
+    background: linear-gradient(135deg, #40E0D0 0%, #20B2AA 100%);
     color: #fff;
     border: none;
     border-radius: 12px;
@@ -162,7 +162,7 @@
     font-size: 0.95rem;
     font-weight: 700;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(31,191,115,0.2);
+    box-shadow: 0 4px 12px rgba(32,178,170,0.2);
     position: relative;
     overflow: hidden;
 }
@@ -184,7 +184,7 @@
 
 .product-card .add-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(31,191,115,0.35);
+    box-shadow: 0 6px 20px rgba(32,178,170,0.35);
 }
 
 .product-card .add-btn:active {
@@ -217,9 +217,9 @@
 
 .qty-btn:hover {
     background: linear-gradient(135deg, #e0f7ef 0%, #d4f4e8 100%);
-    border-color: #3fbf9f;
+    border-color: #20B2AA;
     transform: scale(1.1);
-    box-shadow: 0 4px 8px rgba(31,191,115,0.2);
+    box-shadow: 0 4px 8px rgba(32,178,170,0.2);
 }
 
 .qty-btn:active {
@@ -231,7 +231,7 @@
     text-align: center;
     font-weight: 800;
     font-size: 1.15rem;
-    color: #1dbf73;
+    color: #40E0D0;
     padding: 4px 8px;
     background: #f0fdf7;
     border-radius: 8px;
