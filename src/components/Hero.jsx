@@ -1,5 +1,4 @@
 import React from 'react';
-import heroImg from '../assets/hero.png';
 
 /**
  * props:
@@ -10,7 +9,10 @@ import heroImg from '../assets/hero.png';
  */
 const Hero = ({ categories, positions, onCategoryClick, selectedId }) => (
   <section className="hero">
-    <img src={heroImg} alt="Hero Background" className="hero-bg" />
+    <div className="hero-content">
+      <h1 className="hero-title">MCL</h1>
+      <p className="hero-subtitle">Mobile Center Lamerd</p>
+    </div>
 
     <svg className="hero-wave" viewBox="0 0 1440 320" preserveAspectRatio="none">
       <path
