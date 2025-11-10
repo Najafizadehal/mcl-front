@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import WaveHeader from '../components/WaveHeader';
 import ProductCard from '../components/productCart/ProductCard.jsx';
-import { getAllOrders, getAllOrdersForAdmin, cancelOrder } from '../services/orderService';
+import { getAllOrders, getAllOrdersForAdmin, cancelOrder, approveOrder } from '../services/orderService';
 
 import {
   ResponsiveContainer,
@@ -535,6 +535,18 @@ function Orders({ showAlert, showConfirm, closeAlert }) {
     });
   };
 
+  const handleApproveOrder = async (orderId) => {
+    showConfirm('آیا از تایید این سفارش مطمئن هستید؟', async () => {
+      try {
+        await approveOrder(orderId);
+        showAlert('سفارش با موفقیت تایید شد', 'success');
+        loadOrders();
+      } catch (err) {
+        showAlert('خطا در تایید سفارش', 'error');
+      }
+    });
+  };
+
   const showOrderDetails = (order) => {
     setSelectedOrder(order);
   };
@@ -581,12 +593,22 @@ function Orders({ showAlert, showConfirm, closeAlert }) {
         جزئیات
       </button>
       {order.status === 'PENDING' && (
-        <button
-          className="cancel-btn"
-          onClick={() => handleCancelOrder(order.id)}
-        >
-          کنسل
-        </button>
+        <>
+          {localStorage.getItem('userRole') === 'ADMIN' && (
+            <button
+              className="approve-btn"
+              onClick={() => handleApproveOrder(order.id)}
+            >
+              تایید
+            </button>
+          )}
+          <button
+            className="cancel-btn"
+            onClick={() => handleCancelOrder(order.id)}
+          >
+            کنسل
+          </button>
+        </>
       )}
     </div>
   </div>

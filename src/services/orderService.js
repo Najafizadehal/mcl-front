@@ -66,3 +66,18 @@ export async function getAllOrdersForAdmin() {
     throw err;
   }
 }
+
+/**
+ * تایید سفارش توسط ادمین
+ * @param {string} orderId - ID سفارش
+ * @returns {Promise<Object>}
+ */
+export async function approveOrder(orderId) {
+  try {
+    const res = await api.patch(`${BASE_PATH}/${orderId}/approve`);
+    return res.data;
+  } catch (err) {
+    console.error('خطا در تایید سفارش:', err);
+    throw err;
+  }
+}
