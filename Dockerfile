@@ -8,6 +8,9 @@ RUN npm ci --no-audit --no-fund
 
 # Copy source and build
 COPY . .
+# Build with API base URL provided at build time
+ARG REACT_APP_API_BASE_URL
+ENV REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL
 RUN npm run build
 
 # ====== Runtime stage ======
