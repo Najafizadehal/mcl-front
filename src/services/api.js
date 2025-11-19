@@ -3,7 +3,7 @@ import axios from 'axios';
 import { refresh } from './authService';
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL || 'http://localhost:8081',
+  baseURL: process.env.REACT_APP_API_BASE_URL || 'https://mcl-backend.liara.run',
   withCredentials: true,              // برای ارسال کوکی HttpOnly
 });
 
