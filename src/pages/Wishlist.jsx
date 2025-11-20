@@ -41,7 +41,7 @@ const Wishlist = ({ onAdd, cart, onIncrement, onDecrement }) => {
     const cartItem = {
       id: product.id,
       title: product.name,
-      price: Number(product.price).toLocaleString(),
+      price: Number(product.price),
       img: product.imageUrl,
       name: product.name
     };

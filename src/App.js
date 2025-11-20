@@ -1,4 +1,6 @@
+import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import './App.css';
 import Login          from './pages/Login';
 import Register       from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
@@ -7,13 +9,26 @@ import Cart           from './pages/Cart';
 import Wishlist       from './pages/Wishlist';
 import ProtectedRoute from './routes/ProtectedRoute';
 import Profile from './pages/Profile';
-import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Alert from './components/common/Alert';
 
-// صفحه‌هایی که فقط وقتی لاگین نیستید در دسترس‌اند
 const PublicOnly = ({ children }) =>
   localStorage.getItem('token') ? <Navigate to="/" replace /> : children;
+
+const CART_STORAGE_KEY = 'cart';
+
+const normalizePrice = (value, fallback = 0) => {
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  if (typeof value === 'string') {
+    const num = Number(value.replace(/,/g, ''));
+    if (Number.isFinite(num)) return num;
+  }
+  if (value != null) {
+    const num = Number(value);
+    if (Number.isFinite(num)) return num;
+  }
+  return fallback;
+};
 
 export default function App() {
   const [cart, setCart] = useState({});
@@ -22,16 +37,13 @@ export default function App() {
 
   const cartItems = Object.values(cart);
 
-  // سیستم نمایش پیام‌ها
   const showAlert = (message, type = 'success', duration = 4000) => {
     setAlert({ message, type, duration });
   };
 
-  const hideAlert = () => {
-    setAlert(null);
-  };
+  const hideAlert = () => setAlert(null);
 
-  // در دسترس قرار دادن showAlert در سراسر برنامه
+  // expose toast globally for legacy callers
   useEffect(() => {
     window.showAlert = showAlert;
     return () => {
@@ -39,26 +51,54 @@ export default function App() {
     };
   }, []);
 
+  // Hydrate cart from localStorage on first load
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(CART_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') {
+          setCart(parsed);
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to restore cart from storage', e);
+    }
+  }, []);
+
+  // Persist cart changes
+  useEffect(() => {
+    try {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+    } catch (e) {
+      console.warn('Failed to persist cart', e);
+    }
+  }, [cart]);
+
   const handleAdd = item => {
+    const price = normalizePrice(item.priceValue ?? item.price);
     setCart(prev => {
       const prevQty = prev[item.id]?.quantity || 0;
       return {
         ...prev,
-        [item.id]: { ...item, quantity: prevQty + 1 }
+        [item.id]: { ...item, img: item.img || item.imageUrl, price, quantity: prevQty + 1 }
       };
     });
     showAlert(`${item.title || item.name} به سبد خرید اضافه شد`, 'success');
   };
+
   const handleIncrement = item => {
+    const price = normalizePrice(item.priceValue ?? item.price);
     setCart(prev => {
       const prevQty = prev[item.id]?.quantity || 0;
       return {
         ...prev,
-        [item.id]: { ...item, quantity: prevQty + 1 }
+        [item.id]: { ...item, img: item.img || item.imageUrl, price, quantity: prevQty + 1 }
       };
     });
     showAlert(`تعداد ${item.title || item.name} افزایش یافت`, 'info');
   };
+
   const handleDecrement = item => {
     setCart(prev => {
       const prevQty = prev[item.id]?.quantity || 0;
@@ -82,23 +122,17 @@ export default function App() {
     showAlert(`${item.title || item.name} از سبد خرید حذف شد`, 'warning');
   };
 
-  const handleClearCart = () => {
-    setCart({});
-  };
+  const handleClearCart = () => setCart({});
 
   const handleSearch = text => {
-    console.log('جست‌وجو:', text);
+    console.log('search:', text);
   };
 
-  // مسیرهایی که نباید نوبار نمایش داده شود
   const hideNavbarRoutes = ['/login', '/register', '/forgot-password'];
   const hideNavbar = hideNavbarRoutes.includes(location.pathname);
 
-  // پاک کردن سبد خرید بعد از ثبت سفارش
   useEffect(() => {
-    const clearCart = () => {
-      setCart({});
-    };
+    const clearCart = () => setCart({});
     window.addEventListener('clear-cart', clearCart);
     return () => window.removeEventListener('clear-cart', clearCart);
   }, []);
@@ -107,15 +141,11 @@ export default function App() {
     <>
       {!hideNavbar && (
         <Navbar
-          cart={cart}
           cartItems={cartItems}
-          onIncrement={handleIncrement}
-          onDecrement={handleDecrement}
           onSearch={handleSearch}
         />
       )}
       <Routes>
-        {/* صفحات عمومی */}
         <Route
           path="/login"
           element={
@@ -134,7 +164,6 @@ export default function App() {
         />
         <Route path="/forgot-password" element={<ForgotPassword />} />
 
-        {/* مسیرهای محافظت‌شده */}
         <Route element={<ProtectedRoute />}>
           <Route path="/" element={<Home cart={cart} onAdd={handleAdd} onIncrement={handleIncrement} onDecrement={handleDecrement} />} />
           <Route path="/home" element={<Home cart={cart} onAdd={handleAdd} onIncrement={handleIncrement} onDecrement={handleDecrement} />} />
@@ -143,11 +172,9 @@ export default function App() {
           <Route path="/profile" element={<Profile />} />
         </Route>
 
-        {/* هر مسیر نامشخص → صفحه اصلی */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       
-      {/* نمایش پیام‌ها */}
       {alert && (
         <Alert
           message={alert.message}

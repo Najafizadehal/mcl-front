@@ -14,7 +14,7 @@ import iconTools from '../assets/icons/repair.png';
 import iconMobile from '../assets/icons/mobile.png';
 import { getAllProducts as fetchProducts, getProductById } from '../services/productService';
 import { createOrUpdateReview, getProductReviews, deleteReview } from '../services/reviewService';
-import { addToWishlist, removeFromWishlist, checkInWishlist } from '../services/wishlistService';
+import { addToWishlist, removeFromWishlist, getWishlistProducts } from '../services/wishlistService';
 
 const categories = [
   { id: 1, label: 'قطعات ریز', icon: iconParts,  type: 'SMALLPARTS',  size: 64 },
@@ -82,17 +82,22 @@ const Home = ({ cart, onAdd, onIncrement, onDecrement }) => {
   
   useEffect(() => {
     const loadWishlistStatus = async () => {
-      if (products.length === 0) return;
-      const statusMap = {};
-      for (const product of products) {
-        try {
-          const inWishlist = await checkInWishlist(product.id);
-          statusMap[product.id] = inWishlist;
-        } catch (err) {
-          console.error(`Error checking wishlist for product ${product.id}:`, err);
-        }
+      if (products.length === 0) {
+        setWishlistStatus({});
+        return;
       }
-      setWishlistStatus(statusMap);
+      try {
+        const wishlistItems = await getWishlistProducts();
+        const ids = new Set((wishlistItems || []).map(p => p.id));
+        const statusMap = {};
+        products.forEach(p => {
+          statusMap[p.id] = ids.has(p.id);
+        });
+        setWishlistStatus(statusMap);
+      } catch (err) {
+        console.error('Error loading wishlist status:', err);
+        setWishlistStatus({});
+      }
     };
     loadWishlistStatus();
   }, [products]);
@@ -303,7 +308,8 @@ const Home = ({ cart, onAdd, onIncrement, onDecrement }) => {
           items={filteredProducts.map(p => ({
             id: p.id,
             title: p.name,
-            price: Number(p.price).toLocaleString(),
+            priceValue: Number(p.price),
+            priceText: Number(p.price).toLocaleString(),
             img: p.imageUrl,
             description: p.description,
             productType: p.productType,

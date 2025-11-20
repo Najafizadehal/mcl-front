@@ -3,23 +3,26 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/Cart.css';
 import { createOrder } from '../services/orderService';
 
+const toPrice = (value) => {
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  if (typeof value === 'string') {
+    const num = Number(value.replace(/,/g, ''));
+    if (Number.isFinite(num)) return num;
+  }
+  if (value != null) {
+    const num = Number(value);
+    if (Number.isFinite(num)) return num;
+  }
+  return 0;
+};
+
 const Cart = ({ cart, cartItems, onIncrement, onDecrement, onRemove, onClearCart }) => {
   const navigate = useNavigate();
   const [discountCode, setDiscountCode] = useState('');
   const [discountMessage, setDiscountMessage] = useState('');
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
-  // محاسبه مجموع
-  const calculateTotal = () => {
-    return cartItems.reduce((sum, item) => {
-      const price = typeof item.price === 'string' 
-        ? parseFloat(item.price.replace(/,/g, '')) 
-        : item.price;
-      return sum + (price * item.quantity);
-    }, 0);
-  };
-
-  const total = calculateTotal();
+  const total = cartItems.reduce((sum, item) => sum + (toPrice(item.price) * item.quantity), 0);
 
   const handleCheckout = async () => {
     if (cartItems.length === 0 || checkoutLoading) return;
@@ -37,14 +40,14 @@ const Cart = ({ cart, cartItems, onIncrement, onDecrement, onRemove, onClearCart
       });
 
       if (response.success) {
-        window.showAlert?.('سفارش با موفقیت ثبت شد!', 'success');
+        window.showAlert?.('سفارش شما با موفقیت ثبت شد!', 'success');
         onClearCart();
         navigate('/profile');
       } else {
-        window.showAlert?.(response.message || 'خطا در ثبت سفارش', 'error');
+        window.showAlert?.(response.message || 'مشکلی در ثبت سفارش پیش آمد', 'error');
       }
     } catch (e) {
-      const errorMsg = e?.response?.data?.message || e?.message || 'خطا در ثبت سفارش';
+      const errorMsg = e?.response?.data?.message || e?.message || 'مشکلی در ثبت سفارش پیش آمد';
       window.showAlert?.(errorMsg, 'error');
     } finally {
       setCheckoutLoading(false);
@@ -56,8 +59,8 @@ const Cart = ({ cart, cartItems, onIncrement, onDecrement, onRemove, onClearCart
       setDiscountMessage('');
       return;
     }
-    setDiscountMessage('کد تخفیف اعمال خواهد شد');
-    // در backend بررسی می‌شود
+    setDiscountMessage('کد تخفیف اعمال خواهد شد (نیاز به پشتیبان).');
+    // در صورت وجود API واقعی، اینجا فراخوانی شود.
   };
 
   if (cartItems.length === 0) {
@@ -66,7 +69,7 @@ const Cart = ({ cart, cartItems, onIncrement, onDecrement, onRemove, onClearCart
         <div className="cart-empty-state">
           <div className="empty-cart-icon">🛒</div>
           <h2>سبد خرید شما خالی است</h2>
-          <p>به نظر می‌رسد هنوز محصولی به سبد خرید خود اضافه نکرده‌اید</p>
+          <p>برای افزودن کالا به سبد خرید، به صفحه محصولات برگردید.</p>
           <button className="continue-shopping-btn" onClick={() => navigate('/')}>
             ادامه خرید
           </button>
@@ -78,9 +81,9 @@ const Cart = ({ cart, cartItems, onIncrement, onDecrement, onRemove, onClearCart
   return (
     <div className="cart-page">
       <div className="cart-container">
-        {/* لیست محصولات */}
+        {/* لیست اقلام */}
         <div className="cart-items-section">
-          <h2 className="cart-title">سبد خرید ({cartItems.length} محصول)</h2>
+          <h2 className="cart-title">سبد خرید ({cartItems.length} کالا)</h2>
           
           <div className="cart-items-list">
             {cartItems.map(item => (
@@ -97,7 +100,7 @@ const Cart = ({ cart, cartItems, onIncrement, onDecrement, onRemove, onClearCart
                   
                   <div className="cart-item-price">
                     <span className="price-label">قیمت واحد:</span>
-                    <span className="price-value">{item.price} تومان</span>
+                    <span className="price-value">{toPrice(item.price).toLocaleString()} تومان</span>
                   </div>
                 </div>
 
@@ -119,10 +122,7 @@ const Cart = ({ cart, cartItems, onIncrement, onDecrement, onRemove, onClearCart
                   </div>
 
                   <div className="cart-item-total">
-                    {(typeof item.price === 'string' 
-                      ? parseFloat(item.price.replace(/,/g, '')) * item.quantity
-                      : item.price * item.quantity
-                    ).toLocaleString()} تومان
+                    {(toPrice(item.price) * item.quantity).toLocaleString()} تومان
                   </div>
 
                   <button 
@@ -130,7 +130,7 @@ const Cart = ({ cart, cartItems, onIncrement, onDecrement, onRemove, onClearCart
                     onClick={() => onRemove(item)}
                     title="حذف از سبد"
                   >
-                    🗑️
+                    حذف
                   </button>
                 </div>
               </div>
@@ -138,18 +138,18 @@ const Cart = ({ cart, cartItems, onIncrement, onDecrement, onRemove, onClearCart
           </div>
         </div>
 
-        {/* خلاصه سفارش */}
+        {/* خلاصه هزینه */}
         <div className="cart-summary-section">
           <div className="cart-summary-card">
             <h3 className="summary-title">خلاصه سفارش</h3>
 
             <div className="summary-row">
-              <span>تعداد محصولات:</span>
+              <span>تعداد اقلام:</span>
               <span>{cartItems.reduce((sum, item) => sum + item.quantity, 0)} عدد</span>
             </div>
 
             <div className="summary-row">
-              <span>جمع کل:</span>
+              <span>مبلغ کل:</span>
               <span className="total-price">{total.toLocaleString()} تومان</span>
             </div>
 
@@ -182,7 +182,7 @@ const Cart = ({ cart, cartItems, onIncrement, onDecrement, onRemove, onClearCart
               onClick={handleCheckout}
               disabled={checkoutLoading}
             >
-              {checkoutLoading ? 'در حال ثبت سفارش...' : 'نهایی کردن خرید'}
+              {checkoutLoading ? 'در حال ثبت سفارش...' : 'تایید و پرداخت'}
             </button>
 
             <button

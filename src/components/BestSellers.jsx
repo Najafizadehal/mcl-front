@@ -23,7 +23,7 @@ const BestSellers = ({ items, onAdd, cart, onIncrement, onDecrement, onProductCl
           <ProductCard
             key={p.id}
             title={p.title}
-            price={p.price}
+            price={p.priceText ?? p.price}
             img={p.img}
             onAdd={() => onAdd(p)}
             quantity={cart[p.id]?.quantity || undefined}
