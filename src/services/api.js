@@ -3,21 +3,21 @@ import axios from 'axios';
 import { refresh } from './authService';
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL || 'https://mcl.liara.run',
-  withCredentials: true,              // برای ارسال کوکی HttpOnly
+  // آدرس بک‌اند را از متغیر محیطی می‌گیرد؛
+  // در حالت توسعه (npm start) از .env.development و در حالت پرود از .env.production خوانده می‌شود.
+  baseURL: process.env.REACT_APP_API_BASE_URL || 'http://localhost:8081',
+  withCredentials: true,              // ارسال کوکی‌ها (در صورت نیاز)
 });
 
 api.interceptors.request.use(config => {
   const token = localStorage.getItem('token');
   if (token) {
-    // مستقیماً روی headers بنویسید، نه headers.common
     config.headers = config.headers || {};
     config.headers['Authorization'] = `Bearer ${token}`;
   }
   return config;
 });
 
-// ➋: مدیریت 401 و ری‌فرش توکن
 let isRefreshing = false;
 let failedQueue = [];
 
@@ -42,7 +42,6 @@ api.interceptors.response.use(
       }
       isRefreshing = true;
       try {
-        // این متد کوکی RefreshToken را خودکار ارسال می‌کند
         const { accessToken } = await refresh();
         localStorage.setItem('token', accessToken);
         api.defaults.headers['Authorization'] = `Bearer ${accessToken}`;
@@ -63,3 +62,4 @@ api.interceptors.response.use(
 );
 
 export default api;
+
