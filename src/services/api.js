@@ -5,7 +5,7 @@ import { refresh } from './authService';
 const api = axios.create({
   // آدرس بک‌اند را از متغیر محیطی می‌گیرد؛
   // در حالت توسعه (npm start) از .env.development و در حالت پرود از .env.production خوانده می‌شود.
-  baseURL: process.env.REACT_APP_API_BASE_URL || 'http://localhost:8081',
+  baseURL: process.env.REACT_APP_API_BASE_URL || 'https://mcl.liara.run',
   withCredentials: true,              // ارسال کوکی‌ها (در صورت نیاز)
 });
 
