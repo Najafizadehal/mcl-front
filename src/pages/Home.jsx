@@ -16,6 +16,13 @@ import { getAllProducts as fetchProducts, getProductById } from '../services/pro
 import { createOrUpdateReview, getProductReviews, deleteReview } from '../services/reviewService';
 import { addToWishlist, removeFromWishlist, getWishlistProducts } from '../services/wishlistService';
 
+const API_BASE = process.env.REACT_APP_API_BASE_URL || '';
+
+const normalizeImageUrl = (url) => {
+  if (!url) return url;
+  return API_BASE ? url.replace('http://localhost:8081', API_BASE) : url;
+};
+
 const categories = [
   { id: 1, label: 'قطعات ریز', icon: iconParts,  type: 'SMALLPARTS',  size: 64 },
   { id: 2, label: 'ال‌سی‌دی',   icon: iconMobile, type: 'LCD',        size: 64 },
@@ -310,7 +317,7 @@ const Home = ({ cart, onAdd, onIncrement, onDecrement }) => {
             title: p.name,
             priceValue: Number(p.price),
             priceText: Number(p.price).toLocaleString(),
-            img: p.imageUrl,
+            img: normalizeImageUrl(p.imageUrl),
             description: p.description,
             productType: p.productType,
             stockQuantity: p.stockQuantity,

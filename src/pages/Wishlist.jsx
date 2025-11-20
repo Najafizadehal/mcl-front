@@ -3,6 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { getWishlistProducts, removeFromWishlist } from '../services/wishlistService';
 import '../styles/Wishlist.css';
 
+const API_BASE = process.env.REACT_APP_API_BASE_URL || '';
+const normalizeImageUrl = (url) => {
+  if (!url) return url;
+  return API_BASE ? url.replace('http://localhost:8081', API_BASE) : url;
+};
+
 const Wishlist = ({ onAdd, cart, onIncrement, onDecrement }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -42,7 +48,7 @@ const Wishlist = ({ onAdd, cart, onIncrement, onDecrement }) => {
       id: product.id,
       title: product.name,
       price: Number(product.price),
-      img: product.imageUrl,
+      img: normalizeImageUrl(product.imageUrl),
       name: product.name
     };
     onAdd(cartItem);
@@ -111,7 +117,7 @@ const Wishlist = ({ onAdd, cart, onIncrement, onDecrement }) => {
               </button>
 
               <div className="wishlist-item-image" onClick={() => navigate('/')}>
-                <img src={product.imageUrl} alt={product.name} />
+                <img src={normalizeImageUrl(product.imageUrl)} alt={product.name} />
               </div>
 
               <div className="wishlist-item-info">
@@ -148,9 +154,9 @@ const Wishlist = ({ onAdd, cart, onIncrement, onDecrement }) => {
 
                 {isInCart ? (
                   <div className="wishlist-qty-controls">
-                    <button onClick={() => onDecrement({ ...product, title: product.name, price: Number(product.price).toLocaleString(), img: product.imageUrl })}>-</button>
+                    <button onClick={() => onDecrement({ ...product, title: product.name, price: Number(product.price).toLocaleString(), img: normalizeImageUrl(product.imageUrl) })}>-</button>
                     <span>{cartQuantity}</span>
-                    <button onClick={() => onIncrement({ ...product, title: product.name, price: Number(product.price).toLocaleString(), img: product.imageUrl })}>+</button>
+                    <button onClick={() => onIncrement({ ...product, title: product.name, price: Number(product.price).toLocaleString(), img: normalizeImageUrl(product.imageUrl) })}>+</button>
                   </div>
                 ) : (
                   <button 
