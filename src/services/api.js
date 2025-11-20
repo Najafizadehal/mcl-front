@@ -1,43 +1,42 @@
 // src/services/api.js
 import axios from 'axios';
 import { refresh } from './authService';
+import config from '../config/env';
 
 const api = axios.create({
-  // آدرس بک‌اند را از متغیر محیطی می‌گیرد؛
-  // در حالت توسعه (npm start) از .env.development و در حالت پرود از .env.production خوانده می‌شود.
-  baseURL: process.env.REACT_APP_API_BASE_URL || 'https://mcl.liara.run',
-  withCredentials: true,              // ارسال کوکی‌ها (در صورت نیاز)
+  baseURL: config.API_BASE_URL,
+  withCredentials: true,
 });
 
-api.interceptors.request.use(config => {
+api.interceptors.request.use(requestConfig => {
   const token = localStorage.getItem('token');
   if (token) {
-    config.headers = config.headers || {};
-    config.headers['Authorization'] = `Bearer ${token}`;
+    requestConfig.headers = requestConfig.headers || {};
+    requestConfig.headers['Authorization'] = `Bearer ${token}`;
   }
-  return config;
+  return requestConfig;
 });
 
 let isRefreshing = false;
 let failedQueue = [];
 
 const processQueue = (error, token = null) => {
-  failedQueue.forEach(prom => error ? prom.reject(error) : prom.resolve(token));
+  failedQueue.forEach(prom => (error ? prom.reject(error) : prom.resolve(token)));
   failedQueue = [];
 };
 
 api.interceptors.response.use(
   res => res,
   async err => {
-    const { config, response } = err;
-    if (response?.status === 401 && !config._retry) {
-      config._retry = true;
+    const { config: originalConfig, response } = err;
+    if (response?.status === 401 && !originalConfig._retry) {
+      originalConfig._retry = true;
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         }).then(token => {
-          config.headers.common['Authorization'] = `Bearer ${token}`;
-          return api(config);
+          originalConfig.headers.common['Authorization'] = `Bearer ${token}`;
+          return api(originalConfig);
         });
       }
       isRefreshing = true;
@@ -46,8 +45,8 @@ api.interceptors.response.use(
         localStorage.setItem('token', accessToken);
         api.defaults.headers['Authorization'] = `Bearer ${accessToken}`;
         processQueue(null, accessToken);
-        config.headers.common['Authorization'] = `Bearer ${accessToken}`;
-        return api(config);
+        originalConfig.headers.common['Authorization'] = `Bearer ${accessToken}`;
+        return api(originalConfig);
       } catch (e) {
         processQueue(e, null);
         localStorage.clear();
