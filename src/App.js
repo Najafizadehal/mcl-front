@@ -143,6 +143,8 @@ export default function App() {
         <Navbar
           cartItems={cartItems}
           onSearch={handleSearch}
+          onIncrement={handleIncrement}
+          onDecrement={handleDecrement}
         />
       )}
       <Routes>

@@ -194,12 +194,15 @@
 .cart-qty-controls {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 8px;
-    margin-top: 8px;
-    justify-content: flex-end;
+    margin-top: auto;              /* قرار گرفتن در پایین، مثل دکمه افزودن */
+    padding: 6px 8px;
+    border-radius: 12px;
+    background: #f5f5f5;
 }
 
-.qty-btn {
+.cart-qty-controls .qty-btn {
     background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
     border: 2px solid #e0e0e0;
     border-radius: 10px;
